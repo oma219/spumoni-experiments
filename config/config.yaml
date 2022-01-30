@@ -1,0 +1,4 @@
+DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp_1"
+NUM_DATASETS: 8
+REPO_DIR: "/home/oahmed6/spumoni_exps"
+SPUMONI_DIR: "/home/oahmed6/spumoni/build"
