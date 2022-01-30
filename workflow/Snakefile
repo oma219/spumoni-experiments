@@ -41,7 +41,7 @@ rule produce_list_of_genomes:
     input:
         get_group_lists
     output:
-        "step_1/dataset_{num}/dataset_{num}_list.txt"
+        temp("step_1/dataset_{num}/dataset_{num}_list.txt")
     run:
         with open(output[0], "w") as fd:
             for file_name in input:
@@ -51,7 +51,7 @@ rule generate_one_seq_per_group:
     input:
         "step_1/dataset_{num}/dataset_{num}_list.txt"
     output:
-        "step_2/dataset_{num}/dataset_{num}.fa"
+        temp("step_2/dataset_{num}/dataset_{num}.fa")
     shell:
         "while read line; do cat $line >> {output}; done<{input} "
 
@@ -59,7 +59,7 @@ rule generate_rev_comp_for_group:
     input:
         "step_2/dataset_{num}/dataset_{num}.fa"
     output:
-        "step_3/dataset_{num}/dataset_{num}_rev_comp.fa"
+        temp("step_3/dataset_{num}/dataset_{num}_rev_comp.fa")
     shell:
         "seqtk seq -r -U {input} > {output}"
 
@@ -68,40 +68,34 @@ rule generate_combined_seq_for_group:
         "step_2/dataset_{num}/dataset_{num}.fa",
         "step_3/dataset_{num}/dataset_{num}_rev_comp.fa"
     output:
-        "individual_datasets/dataset_{num}/dataset_{num}_combined.fa"
+        "input_data/individual_datasets/dataset_{num}/dataset_{num}_combined.fa"
     run:
         shell("cat {input[0]} > {output}")
         shell("sed 's/^>/\>rev_comp_/' {input[1]} >> {output}")
-        #with open(output[0], "w") as output_fd:
-        #    forward_seq = open(input[0], "r").readlines()[1].strip()
-        #    rev_comp_seq = open(input[1], "r").readlines()[1].strip()
-            
-        #    output_fd.write(f">dataset_{wildcards.num}\n")
-        #    output_fd.write(forward_seq + rev_comp_seq + '\n')
 
 rule generate_full_reference:
     input:
-        expand("individual_datasets/dataset_{num}/dataset_{num}_combined.fa", num=range(1, num_datasets+1))
+        expand("input_data/individual_datasets/dataset_{num}/dataset_{num}_combined.fa", num=range(1, num_datasets+1))
     output:
-        "combined_dataset/full_dataset.fa"
+        "input_data/combined_dataset/full_dataset.fa"
     shell:
-        "cat {input} > {output}"
+        "for data_file in {input}; do cat $data_file >> {output[0]}; done"
 
 rule build_fasta_index:
     input:
-        "combined_dataset/full_dataset.fa"
+        "input_data/combined_dataset/full_dataset.fa"
     output:
-        "combined_dataset/full_dataset.fa.fai"
+        "input_data/combined_dataset/full_dataset.fa.fai"
     shell:
         "samtools faidx {input}"
 
 rule build_spumoni_index:
     input:
-        "combined_dataset/full_dataset.fa",
-        "combined_dataset/full_dataset.fa.fai"
+        "input_data/combined_dataset/full_dataset.fa",
+        "input_data/combined_dataset/full_dataset.fa.fai"
     output:
-        "combined_dataset/full_dataset.fa.thrbv.ms",
-        "combined_dataset/full_dataset.fa.thrbv.spumoni"
+        "input_data/combined_dataset/full_dataset.fa.thrbv.ms",
+        "input_data/combined_dataset/full_dataset.fa.thrbv.spumoni"
     run:
         shell("spumoni build -r {input[0]}  -M -P -f -d")
 
