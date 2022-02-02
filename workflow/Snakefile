@@ -49,9 +49,7 @@ def get_files_for_analyzing_document_numbers(wildcards):
 
 rule all:
     input:
-        #expand("results/{output}/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers_converted", output=['ms', 'pml'], type=['ont'], num=range(1, 9))
-        expand("results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.lengths",type=['illumina', 'ont'], num=range(1, 9)) + \
-        expand("results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.pseudo_lengths",type=['illumina', 'ont'], num=range(1, 9))
+        expand("analysis/{type}_{output}_doc_analysis.csv", type=['illumina', 'ont'], output=['ms', 'pml'])
 
 rule produce_list_of_genomes:
     input:
@@ -233,7 +231,6 @@ rule convert_document_numbers:
             seq_boundaries = [seq_lengths[0]]
             for i in range(1, len(seq_lengths)):
                 seq_boundaries.append(seq_lengths[i]+seq_boundaries[i-1])
-            print(seq_boundaries)
             
             # Convert to new 
             with open(output[0], "w") as output_fd:
@@ -249,7 +246,6 @@ rule convert_document_numbers:
 rule analyze_document_numbers:
     input:
         get_files_for_analyzing_document_numbers
-        #"results/{output}/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers_converted"
     output:
         "analysis/{type}_{output}_doc_analysis.csv"
     run:
@@ -260,10 +256,18 @@ rule analyze_document_numbers:
                 counts[doc] += 1
             return [x/sum(counts) for x in counts]
 
+        output_fd = open(output[0], "w")
+        headers = ['read_set', 'class_1_percent', 'class_2_percent','class_3_percent','class_4_percent',
+                   'class_5_percent','class_6_percent','class_7_percent','class_8_percent']
+        output_fd.write(",".join(headers) + "\n")
+
         for input_file in input:
+            read_set = input_file.split("/")[3]
+
+            # Calculate the average % across documents
             with open(input_file, "r") as input_fd:
                 all_lines = input_fd.readlines()
-
+ 
                 total_percents = [0.0 for x in range(num_datasets)]
                 num_reads = 0
                 for line in all_lines:
@@ -273,8 +277,9 @@ rule analyze_document_numbers:
                         for i, val in enumerate(percents):
                             total_percents[i] += val
                 total_percents = [round(x/num_reads, 4) for x in total_percents]       
-                print(total_percents)
-        exit(1)
+            output_fd.write(",".join([read_set] + [str(x) for x in total_percents]) + "\n")
+        output_fd.close()
+        
 
 
 
