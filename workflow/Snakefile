@@ -10,10 +10,13 @@ configfile: "config/config.yaml"
 import glob
 import os
 
+# Variables from config file
 num_datasets = config["NUM_DATASETS"]
 base_dir = config["DATA_ROOT"]
 repo_dir = config["REPO_DIR"]
 spumoni_dir = config["SPUMONI_DIR"]
+num_reads_per_dataset = config["READS_PER_DATASET"]
+pbsim_model = config["PBSIM_MODEL"]
 
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
@@ -33,9 +36,22 @@ def get_group_lists(wildcards):
             file_list.append(f"data/dataset_{wildcards.num}/" + data_file)
     return file_list
 
+def get_files_for_analyzing_document_numbers(wildcards):
+    """ Returns the input filelist for all files within a certain read-type/output-type group """
+    output_type = wildcards.output
+    read_type = wildcards.type
+    input_filelist = [f"results/{output_type}/{read_type}/dataset_{num}/dataset_{num}_{read_type}_reads.fa.doc_numbers_converted" for num in range(1, num_datasets+1)]
+    return input_filelist
+
 ###########################################################
 # Start of Snakemake rules ...
 ###########################################################
+
+rule all:
+    input:
+        #expand("results/{output}/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers_converted", output=['ms', 'pml'], type=['ont'], num=range(1, 9))
+        expand("results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.lengths",type=['illumina', 'ont'], num=range(1, 9)) + \
+        expand("results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.pseudo_lengths",type=['illumina', 'ont'], num=range(1, 9))
 
 rule produce_list_of_genomes:
     input:
@@ -98,4 +114,168 @@ rule build_spumoni_index:
         "input_data/combined_dataset/full_dataset.fa.thrbv.spumoni"
     run:
         shell("spumoni build -r {input[0]}  -M -P -f -d")
+
+rule generate_raw_positive_short_reads:
+    input:
+        "input_data/individual_datasets/dataset_{num}/dataset_{num}_combined.fa"
+    output:
+        temp("step_4/illumina/dataset_{num}/dataset_{num}_illumina_reads.fq")
+    shell:
+        """
+        art_illumina -ss HS25 -i {input} -na -l 150 -f 2.0 \
+        -o step_4/illumina/dataset_{wildcards.num}/dataset_{wildcards.num}_illumina_reads
+        """
+
+rule generate_raw_positive_long_reads:
+    input:
+        "input_data/individual_datasets/dataset_{num}/dataset_{num}_combined.fa"
+    output:
+        temp("step_4/ont/dataset_{num}/dataset_{num}_ont_reads.fastq")
+    run:
+        shell("""
+        pbsim --depth 25.0 --prefix step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads \
+        --hmm_model {pbsim_model} --accuracy-mean 0.95 --length-min 200 {input}
+        """)
+        shell("cat 'step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads'*.fastq > {output}")
+        shell("ls 'step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads_'*.fastq | xargs rm")
+        shell("ls 'step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads_'*.ref | xargs rm")
+        shell("ls 'step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads_'*.maf | xargs rm")
+
+rule convert_long_reads_to_fasta_and_subset:
+    input:
+        "step_4/ont/dataset_{num}/dataset_{num}_ont_reads.fastq"
+    output:
+        "reads/ont/dataset_{num}/dataset_{num}_ont_reads.fa"
+    run:
+        num_lines = num_reads_per_dataset * 4
+        shell("head -n{num_lines} {input} > step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads_subset.fq")
+        shell("seqtk seq -a step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads_subset.fq > {output}")
+        shell("if [ $(grep -c '>' {output}) != {num_reads_per_dataset} ]; then echo 'number of reads assertion failed.'; exit 1; fi")
+        shell("rm step_4/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads_subset.fq")
+
+rule convert_short_reads_to_fasta_and_subset:
+    input:
+        "step_4/illumina/dataset_{num}/dataset_{num}_illumina_reads.fq"
+    output:
+        "reads/illumina/dataset_{num}/dataset_{num}_illumina_reads.fa"
+    run:
+        num_lines = num_reads_per_dataset * 4
+        shell("head -n{num_lines} {input} > step_4/illumina/dataset_{wildcards.num}/dataset_{wildcards.num}_illumina_reads_subset.fq")
+        shell("seqtk seq -a step_4/illumina/dataset_{wildcards.num}/dataset_{wildcards.num}_illumina_reads_subset.fq > {output}")
+        shell("if [ $(grep -c '>' {output}) != {num_reads_per_dataset} ]; then echo 'number of reads assertion failed.'; exit 1; fi")
+        shell("rm step_4/illumina/dataset_{wildcards.num}/dataset_{wildcards.num}_illumina_reads_subset.fq")
+
+rule copy_reads_to_result_folder:
+    input:
+        "reads/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa"
+    output:
+        "results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa",
+        "results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa"
+    run:
+        shell("cp {input} {output[0]}")
+        shell("cp {input} {output[1]}")
+
+rule run_spumoni_ms_on_reads:
+    input:
+        "results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa",
+        "input_data/combined_dataset/full_dataset.fa",
+        "input_data/combined_dataset/full_dataset.fa.thrbv.ms"
+    output:
+        "results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.lengths"
+    shell:
+        "spumoni run -r {input[1]} -p {input[0]} -M -f -d"
+
+rule run_spumoni_pml_on_reads:
+    input:
+        "results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa",
+        "input_data/combined_dataset/full_dataset.fa",
+        "input_data/combined_dataset/full_dataset.fa.thrbv.spumoni"
+    output:
+        "results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.pseudo_lengths"
+    shell:
+        "spumoni run -r {input[1]} -p {input[0]} -P -f -d"
+
+rule generate_list_of_sequence_numbers:
+    input:
+        expand("input_data/individual_datasets/dataset_{num}/dataset_{num}_combined.fa", num=range(1, 9))
+    output:
+        "analysis/seqs_per_group.txt"
+    run:
+        shell("for file in {input}; do num_seqs=$(grep -c '>' $file ); echo $file >> {output}; echo $num_seqs >> {output}; done")
+
+rule convert_document_numbers:
+    input:
+        "results/{output}/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers",
+        "analysis/seqs_per_group.txt"
+    output:
+        "results/{output}/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers_converted"
+    run:
+        def grab_document_number(doc_number, seq_boundaries):
+            for i, boundary in enumerate(seq_boundaries):
+                if doc_number < boundary:
+                    return i
+            raise Exception("There is an issue with this document number.")
+
+        with open(input[0], "r") as input_fd:
+            # Grab sequence lengths
+            all_lines = open(input[1], "r").readlines()
+            dataset_num = 1
+            line_num = 0
+            seq_lengths = []
+            while line_num < len(all_lines):
+                assert f"dataset_{dataset_num}" in all_lines[line_num]
+                dataset_num += 1; line_num += 1
+
+                seq_lengths.append(int(all_lines[line_num]))
+                line_num += 1
+
+            # Convert to total offsets
+            seq_boundaries = [seq_lengths[0]]
+            for i in range(1, len(seq_lengths)):
+                seq_boundaries.append(seq_lengths[i]+seq_boundaries[i-1])
+            print(seq_boundaries)
+            
+            # Convert to new 
+            with open(output[0], "w") as output_fd:
+                all_lines = open(input[0], "r").readlines()
+                for line in all_lines:
+                    if ">" in line:
+                        output_fd.write(line)
+                    else:
+                        numbers = [int(x) for x in line.split()]
+                        converted_nums = [grab_document_number(x, seq_boundaries) for x in numbers]
+                        output_fd.write(" ".join([str(x) for x in converted_nums]) + "\n")
+
+rule analyze_document_numbers:
+    input:
+        get_files_for_analyzing_document_numbers
+        #"results/{output}/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers_converted"
+    output:
+        "analysis/{type}_{output}_doc_analysis.csv"
+    run:
+        def get_percentages(line):
+            counts = [0 for i in range(num_datasets)]
+            doc_list = [int(x) for x in line.split()]
+            for doc in doc_list:
+                counts[doc] += 1
+            return [x/sum(counts) for x in counts]
+
+        for input_file in input:
+            with open(input_file, "r") as input_fd:
+                all_lines = input_fd.readlines()
+
+                total_percents = [0.0 for x in range(num_datasets)]
+                num_reads = 0
+                for line in all_lines:
+                    if ">" not in line:
+                        num_reads += 1
+                        percents = get_percentages(line) 
+                        for i, val in enumerate(percents):
+                            total_percents[i] += val
+                total_percents = [round(x/num_reads, 4) for x in total_percents]       
+                print(total_percents)
+        exit(1)
+
+
+
 
