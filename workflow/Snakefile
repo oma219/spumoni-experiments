@@ -32,5 +32,5 @@ include: "rules/exp_1.smk"
 
 rule all:
     input:
-        expand("analysis/{type}_{output}_doc_analysis.csv", type=['illumina', 'ont'], output=['ms', 'pml'])
+        expand("analysis_exp1/{type}_{output}_doc_analysis.csv", type=['illumina', 'ont'], output=['ms', 'pml'])
 
