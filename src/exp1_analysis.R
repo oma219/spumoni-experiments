@@ -12,11 +12,14 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/illumina_ms_doc_analysis.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/ont_ms_doc_analysis.csv")
+data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2a/illumina_ms_doc_analysis.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2a/ont_ms_doc_analysis.csv")
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_2a/"
 
 dataset_names <- c("Bacillus cereus", "Bacillus anthracis", "Bacillus thuringiensis", "Bacillus weihenstephanensis")
-working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/results/"
+x_labels <- c("Random Reads", "B. cereus", "B. anthracis", "B. thuringiensis", "B. weihenstephanensis")
+columns_to_extract <- c("class_1_percent", "class_2_percent", "class_3_percent",
+                        "class_4_percent")
 
 
 ########################################################################
@@ -27,9 +30,7 @@ make_group_bar_plot <- function(input_df, read_type) {
   # Convert to data.table, melt, and then revert to data.frame
   setDT(input_df)
   group_df_melt <- melt(input_df, 
-                        measure.vars = c("class_1_percent", "class_2_percent", "class_3_percent",
-                                         "class_4_percent", "class_5_percent", "class_6_percent",
-                                         "class_7_percent", "class_8_percent"),
+                        measure.vars = columns_to_extract,
                         variable.name = "class", 
                         value.name = "percent")
   setDF(group_df_melt)
@@ -49,14 +50,11 @@ make_group_bar_plot <- function(input_df, read_type) {
                 legend.title=element_text(size=12),
                 axis.text=element_text(size=12, color="black")) +
           scale_y_continuous(breaks=seq(0, 1.0, 0.1)) +
-          scale_x_discrete(labels=c("E. coli", "Salmonella", "Listeria", "Pseudomonas",
-                                    "Bacillus", "Lactobacteria", "E. faecalis", "Staphylococcus")) +
+          scale_x_discrete(labels=x_labels) +
           labs(x="Simulated Read Set",
                y="Average % of Document Labels Across Read",
                title=graph_title) +
-          scale_fill_discrete(name = "Species",
-                               labels = c("E. coli", "Salmonella", "Listeria", "Pseudomonas",
-                                          "Bacillus subtilis", "Lactobacteria", "E. faecalis", "Staphylococcus"))
+          scale_fill_discrete(name="Species", labels=dataset_names)
     return (plot)
 }
 
