@@ -95,6 +95,10 @@ rule build_spumoni_index:
     run:
         shell("spumoni build -i {input[0]} -b index_exp1/ -M -P -f -d")
 
+# Section 2.3: Simulate both long and short 
+#              reads, first just more than needed, and 
+#              then subset it down to the same number.
+
 rule generate_raw_positive_short_reads:
     input:
         "input_data_exp1/individual_datasets/dataset_{num}/dataset_{num}_combined.fa"
@@ -102,13 +106,9 @@ rule generate_raw_positive_short_reads:
         temp("step_4_exp1/illumina/dataset_{num}/dataset_{num}_illumina_reads.fq")
     shell:
         """
-        art_illumina -ss HS25 -i {input} -na -l 150 -f 2.0 \
+        art_illumina -ss HS25 -i {input} -na -l 150 -f 0.4 \
         -o step_4_exp1/illumina/dataset_{wildcards.num}/dataset_{wildcards.num}_illumina_reads
         """
-
-# Section 2.3: Simulate both long and short 
-#              reads, first just more than needed, and 
-#              then subset it down to the same number.
 
 rule generate_raw_positive_long_reads:
     input:
@@ -117,7 +117,7 @@ rule generate_raw_positive_long_reads:
         temp("step_4_exp1/ont/dataset_{num}/dataset_{num}_ont_reads.fastq")
     run:
         shell("""
-        pbsim --depth 25.0 --prefix step_4_exp1/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads \
+        pbsim --depth 5.0 --prefix step_4_exp1/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads \
         --hmm_model {pbsim_model} --accuracy-mean 0.95 --length-min 200 {input}
         """)
         shell("cat 'step_4_exp1/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads'*.fastq > {output}")
