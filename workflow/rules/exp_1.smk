@@ -12,7 +12,7 @@
 ####################################################
 
 def get_group_lists(wildcards):
-    """ Retuns a list of genomes given a dataset number """
+    """ Returns a list of genomes given a dataset number """
     file_list = []
     for data_file in os.listdir(f"data/dataset_{wildcards.num}"):
         if data_file.endswith(".fna"):
