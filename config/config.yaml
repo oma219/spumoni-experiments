@@ -1,7 +1,7 @@
-DATA_ROOT: "/home/oahmed/storage/storage1/spumoni_exps/exp_2f"
+DATA_ROOT: "/home/oahmed/storage/storage1/spumoni_exps/exp_2a"
 NUM_DATASETS: 1
 REPO_DIR: "/home/oahmed6/spumoni_exps"
 SPUMONI_DIR: "/home/oahmed6/spumoni/build"
 PBSIM_MODEL: "/home/oahmed6/pbsim2/data/R95.model"
 READS_PER_DATASET: 2000
-DATASET_NAME: "salmonella_50"
+DATASET_NAME: "ecoli_10"
