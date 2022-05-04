@@ -60,7 +60,7 @@ make_group_bar_plot <- function(input_df, read_type) {
 
 #########################################################################
 # Start of the "main" method of code ...
-########################################################################
+#########################################################################
 
 # Generates two plots corresponding to short and long reads
 pos <- 1
