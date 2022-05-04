@@ -1,4 +1,4 @@
-## SPUMONI Experiments
+# SPUMONI Experiments
 
 This repository collects the code needed to execute the experiments related to SPUMONI. It mainly uses `snakemake` along different helper scripts to run the experiments. For further detail on what experiment does what check out the wiki page for this repository and the attached results document showing the results from each experiment.
 
