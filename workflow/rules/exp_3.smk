@@ -209,7 +209,7 @@ rule classify_using_promotion_index_exp3:
         spumoni run -r {input[4]} -p $long_positive_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
         spumoni run -r {input[4]} -p $long_null_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
 
-        #rm -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/
+        rm -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/
         """
 
 # Section 2.5: Let SPUMONI classify both short and long reads using DNA-minimizer index
@@ -245,7 +245,7 @@ rule classify_using_dna_index_exp3:
         spumoni run -r {input[4]} -p $long_positive_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
         spumoni run -r {input[4]} -p $long_null_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
 
-        #rm -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/
+        rm -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/
         """
 
 # Section 2.6: Let SPUMONI classify both short and long reads using full index
@@ -288,7 +288,8 @@ rule generate_analysis_file_exp3:
     input:
         get_all_report_files
     output:
-        "exp3_analysis/exp3_total_results.csv"
+        "exp3_analysis/exp3_total_results.csv",
+        "exp3_analysis/exp3_full_index_results.csv",
     run:
         def return_stats_from_file(report_file):
             """
@@ -305,18 +306,24 @@ rule generate_analysis_file_exp3:
             return output_stats
         
         with open(output[0], "w") as out_fd:
+            
+            full_out_fd = open("exp3_analysis/exp3_full_index_results.csv", "w")
+            full_out_fd.write("readlength,TP,FN,TN,FP,accuracy\n")
+
             # Process the report files for the full index 
             TP, FN = return_stats_from_file(input[0])
             FP, TN = return_stats_from_file(input[1])
             accuracy = (TP+TN)/(TP + FN + TN + FP)
-            print(f"short,{TP},{FN},{TN},{FP},{accuracy:.4f}\n")
+            full_out_fd.write(f"short,{TP},{FN},{TN},{FP},{accuracy:.4f}\n")
 
             TP, FN = return_stats_from_file(input[2])
             FP, TN = return_stats_from_file(input[3])
             accuracy = (TP+TN)/(TP + FN + TN + FP)
-            print(f"long,{TP},{FN},{TN},{FP},{accuracy:.4f}\n")
+            full_out_fd.write(f"long,{TP},{FN},{TN},{FP},{accuracy:.4f}\n")
+            full_out_fd.close()
 
             # Process the report files for minimizer indexes
+            out_fd.write("k,w,indextype,readlength,TP,FN,TN,FP,accuracy\n")
             input_list = input[4:]
             for i in range(0, len(input_list), 4):
 
