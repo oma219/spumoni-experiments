@@ -39,7 +39,7 @@ rule produce_list_of_genomes_exp2:
             for file_name in input:
                 fd.write(file_name + "\n")
 
-# Section 2.2: Builds index using promoted-minimizer alpabet and extracts stats
+# Section 2.2: Builds index using promoted-minimizer alphabet and extracts stats
 
 rule build_index_promotion_minimizer_exp2:
     input:
