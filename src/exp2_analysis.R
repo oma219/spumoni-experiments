@@ -171,22 +171,22 @@ for (stat_file in full_stat_files) {
 n_plot <- make_n_plot(full_df)
 n_plot
 output_name <- paste(working_dir, "exp2_normalized_n.png", sep="")
-ggsave(output_name, plot=n_plot, dpi=800, device="jpeg", width=8, height=6)
+ggsave(output_name, plot=n_plot, dpi=1200, device="jpeg", width=8, height=6)
 
 # Plot #2
 nr_plot <- make_nr_plot(full_df)
 nr_plot
 output_name <- paste(working_dir, "exp2_normalized_n_over_r.png", sep="")
-ggsave(output_name, plot=nr_plot, dpi=800, device="jpeg", width=8, height=6)
+ggsave(output_name, plot=nr_plot, dpi=1200, device="jpeg", width=8, height=6)
 
 # Plot #3
 ms_plot <- make_ms_index_plot(full_df)
 ms_plot
 output_name <- paste(working_dir, "exp2_normalized_ms_size.png", sep="")
-ggsave(output_name, plot=ms_plot, dpi=800, device="jpeg", width=8, height=6)
+ggsave(output_name, plot=ms_plot, dpi=1200, device="jpeg", width=8, height=6)
 
 # Plot #4
 pml_plot <- make_pml_index_plot(full_df)
 pml_plot
 output_name <- paste(working_dir, "exp2_normalized_pml_size.png", sep="")
-ggsave(output_name, plot=pml_plot, dpi=800, device="jpeg", width=8, height=6)
+ggsave(output_name, plot=pml_plot, dpi=1200, device="jpeg", width=8, height=6)
