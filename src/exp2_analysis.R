@@ -1,5 +1,5 @@
 #####################################################
-# Name: expw_analysis.R
+# Name: exp2_analysis.R
 # Description: Generates various plots that show
 #              the impact of minimizers on input
 #              references when using SPUMONI
@@ -30,9 +30,9 @@ make_n_plot <- function(input_df) {
           geom_line(aes(color=type, group=interaction(name, type)))+
           geom_point(aes(shape=name, color=type, group=interaction(name, type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
-                axis.title.x=element_text(size =12),
-                axis.title.y=element_text(size=12),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
+                axis.title.x=element_text(size =14),
+                axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
                 legend.text=element_text(size=12),
                 legend.box="vertical",
@@ -54,7 +54,7 @@ make_nr_plot <- function(input_df) {
           geom_line(aes(group=interaction(name,type), color=type))+
           geom_point(aes(shape=name, color=type, group=interaction(name,type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
@@ -78,7 +78,7 @@ make_ms_index_plot <- function(input_df) {
           geom_line(aes(group=interaction(name,type), color=type))+
           geom_point(aes(shape=name, color=type, group=interaction(name,type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
@@ -102,7 +102,7 @@ make_pml_index_plot <- function(input_df) {
           geom_line(aes(group=interaction(name,type), color=type))+
           geom_point(aes(shape=name, color=type, group=interaction(name,type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
