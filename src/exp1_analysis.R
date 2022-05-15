@@ -12,14 +12,17 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2a/illumina_ms_doc_analysis.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2a/ont_ms_doc_analysis.csv")
-working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_2a/"
+data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/illumina_ms_doc_analysis.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/ont_ms_doc_analysis.csv")
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/"
 
-dataset_names <- c("Bacillus cereus", "Bacillus anthracis", "Bacillus thuringiensis", "Bacillus weihenstephanensis")
-x_labels <- c("Random Reads", "B. cereus", "B. anthracis", "B. thuringiensis", "B. weihenstephanensis")
+dataset_names <- c("E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria",
+                    "E. faecalis", "Staphylococcus")
+x_labels <- c("Random Reads", "E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria",
+              "E. faecalis", "Staphylococcus")
 columns_to_extract <- c("class_1_percent", "class_2_percent", "class_3_percent",
-                        "class_4_percent")
+                        "class_4_percent", "class_5_percent", "class_6_percent", "class_7_percent",
+                        "class_8_percent")
 
 
 ########################################################################
@@ -70,7 +73,7 @@ for (input_file in data_paths) {
   input_df <- read.csv(input_file, header=TRUE)
   curr_plot <- make_group_bar_plot(input_df, read_types[pos])
 
-  output_name <- paste(working_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.png", sep="")
-  ggsave(output_name, plot=curr_plot, dpi=800, device="jpeg", width=10, height=6)
+  output_name <- paste(working_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.pdf", sep="")
+  ggsave(output_name, plot=curr_plot, dpi=1200, device="pdf", width=10, height=6)
   pos <- pos + 1
 }

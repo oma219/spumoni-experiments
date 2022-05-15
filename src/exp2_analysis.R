@@ -1,5 +1,5 @@
 #####################################################
-# Name: expw_analysis.R
+# Name: exp2_analysis.R
 # Description: Generates various plots that show
 #              the impact of minimizers on input
 #              references when using SPUMONI
@@ -30,9 +30,9 @@ make_n_plot <- function(input_df) {
           geom_line(aes(color=type, group=interaction(name, type)))+
           geom_point(aes(shape=name, color=type, group=interaction(name, type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
-                axis.title.x=element_text(size =12),
-                axis.title.y=element_text(size=12),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
+                axis.title.x=element_text(size =14),
+                axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
                 legend.text=element_text(size=12),
                 legend.box="vertical",
@@ -43,8 +43,8 @@ make_n_plot <- function(input_df) {
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
           scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
                                                         "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
-          labs(x="Window Size (w)",
-               y="n - normalized",
+          labs(x="Window size (w)",
+               y="Relative n",
                title="Size of Reference File After Different Types of Minimizer Digestion") 
   return(plot)
 }
@@ -54,7 +54,7 @@ make_nr_plot <- function(input_df) {
           geom_line(aes(group=interaction(name,type), color=type))+
           geom_point(aes(shape=name, color=type, group=interaction(name,type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
@@ -67,9 +67,9 @@ make_nr_plot <- function(input_df) {
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
           scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
                                                         "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
-          labs(x="Window Size (w)",
-               y="n/r - normalized",
-               title="Average Run Length (n/r) for Different Datasets After Minimizer Digestion") 
+          labs(x="Window size (w)",
+               y="Relative n/r",
+               title="Relative Run Length (n/r) for Different Datasets After Minimizer Digestion") 
   return(plot)
 }
 
@@ -78,7 +78,7 @@ make_ms_index_plot <- function(input_df) {
           geom_line(aes(group=interaction(name,type), color=type))+
           geom_point(aes(shape=name, color=type, group=interaction(name,type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
@@ -91,9 +91,9 @@ make_ms_index_plot <- function(input_df) {
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
           scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
                                                         "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
-          labs(x="Window Size (w)",
-               y="MS Index Size - normalized",
-               title="Normalized MS Index Size for Different Datasets After Minimizer Digestion") 
+          labs(x="Window size (w)",
+               y="New index size/Old index size",
+               title="Relative MS Index Size for Different Datasets After Minimizer Digestion") 
   return(plot)
 }
 
@@ -102,7 +102,7 @@ make_pml_index_plot <- function(input_df) {
           geom_line(aes(group=interaction(name,type), color=type))+
           geom_point(aes(shape=name, color=type, group=interaction(name,type))) +
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=12, face="bold"),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
@@ -115,9 +115,9 @@ make_pml_index_plot <- function(input_df) {
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
           scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
                                                         "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
-          labs(x="Window Size (w)",
-               y="PML Index Size - normalized",
-               title="Normalized PML Index Size for Different Datasets After Minimizer Digestion") 
+          labs(x="Window size (w)",
+               y="New index Size/Old index Size",
+               title="Relative PML Index Size for Different Datasets After Minimizer Digestion") 
   return(plot)
 }
 
@@ -170,23 +170,23 @@ for (stat_file in full_stat_files) {
 # Plot #1
 n_plot <- make_n_plot(full_df)
 n_plot
-output_name <- paste(working_dir, "exp2_normalized_n.png", sep="")
-ggsave(output_name, plot=n_plot, dpi=800, device="jpeg", width=8, height=6)
+output_name <- paste(working_dir, "exp2_normalized_n.pdf", sep="")
+ggsave(output_name, plot=n_plot, dpi=1200, device="pdf", width=8, height=6)
 
 # Plot #2
 nr_plot <- make_nr_plot(full_df)
 nr_plot
-output_name <- paste(working_dir, "exp2_normalized_n_over_r.png", sep="")
-ggsave(output_name, plot=nr_plot, dpi=800, device="jpeg", width=8, height=6)
+output_name <- paste(working_dir, "exp2_normalized_n_over_r.pdf", sep="")
+ggsave(output_name, plot=nr_plot, dpi=1200, device="pdf", width=8, height=6)
 
 # Plot #3
 ms_plot <- make_ms_index_plot(full_df)
 ms_plot
-output_name <- paste(working_dir, "exp2_normalized_ms_size.png", sep="")
-ggsave(output_name, plot=ms_plot, dpi=800, device="jpeg", width=8, height=6)
+output_name <- paste(working_dir, "exp2_normalized_ms_size.pdf", sep="")
+ggsave(output_name, plot=ms_plot, dpi=1200, device="pdf", width=8, height=6)
 
 # Plot #4
 pml_plot <- make_pml_index_plot(full_df)
 pml_plot
-output_name <- paste(working_dir, "exp2_normalized_pml_size.png", sep="")
-ggsave(output_name, plot=pml_plot, dpi=800, device="jpeg", width=8, height=6)
+output_name <- paste(working_dir, "exp2_normalized_pml_size.pdf", sep="")
+ggsave(output_name, plot=pml_plot, dpi=1200, device="pdf", width=8, height=6)
