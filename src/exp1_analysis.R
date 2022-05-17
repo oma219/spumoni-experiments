@@ -44,14 +44,14 @@ make_group_bar_plot <- function(input_df, read_type) {
   plot <- ggplot(group_df_melt, aes(fill=class, x=read_set, y=percent)) + 
           geom_bar(position="dodge", stat="identity")+
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
-                axis.title.x=element_text(size =14),
-                axis.title.y=element_text(size=14),
+          theme(plot.title=element_text(hjust = 0.5, size=16, face="bold"),
+                axis.title.x=element_text(size =16),
+                axis.title.y=element_text(size=16),
                 legend.position = "bottom", 
-                legend.text=element_text(size=12),
+                legend.text=element_text(size=14),
                 legend.box="vertical",
-                legend.title=element_text(size=12),
-                axis.text=element_text(size=12, color="black")) +
+                legend.title=element_text(size=14),
+                axis.text=element_text(size=14, color="black")) +
           scale_y_continuous(breaks=seq(0, 1.0, 0.1)) +
           scale_x_discrete(labels=x_labels) +
           labs(x="Simulated Read Set",
