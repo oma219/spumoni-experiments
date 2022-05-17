@@ -14,7 +14,7 @@ library(data.table)
 ########################################################################
 data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1b/illumina_ms_doc_analysis.csv",
                 "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1b/ont_ms_doc_analysis.csv")
-working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1b/plots/"
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1b/"
 
 dataset_names <- c("E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria",
                     "E. faecalis", "Staphylococcus")
