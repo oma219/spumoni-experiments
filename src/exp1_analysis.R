@@ -12,9 +12,9 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/illumina_ms_doc_analysis.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/ont_ms_doc_analysis.csv")
-working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/"
+data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1b/illumina_ms_doc_analysis.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1b/ont_ms_doc_analysis.csv")
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1b/plots/"
 
 dataset_names <- c("E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria",
                     "E. faecalis", "Staphylococcus")
@@ -44,14 +44,14 @@ make_group_bar_plot <- function(input_df, read_type) {
   plot <- ggplot(group_df_melt, aes(fill=class, x=read_set, y=percent)) + 
           geom_bar(position="dodge", stat="identity")+
           theme_bw() +
-          theme(plot.title=element_text(hjust = 0.5, size=16, face="bold"),
-                axis.title.x=element_text(size =16),
-                axis.title.y=element_text(size=16),
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
+                axis.title.x=element_text(size =14),
+                axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
-                legend.text=element_text(size=14),
+                legend.text=element_text(size=12),
                 legend.box="vertical",
-                legend.title=element_text(size=14),
-                axis.text=element_text(size=14, color="black")) +
+                legend.title=element_text(size=12),
+                axis.text=element_text(size=12, color="black")) +
           scale_y_continuous(breaks=seq(0, 1.0, 0.1)) +
           scale_x_discrete(labels=x_labels) +
           labs(x="Simulated Read Set",
