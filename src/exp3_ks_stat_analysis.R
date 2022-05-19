@@ -15,7 +15,7 @@ library(data.table)
 
 pos_class_reads <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3_ksstat_analysis/dna_index/long_positive_reads.fa.ks_stats"
 null_class_reads <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3_ksstat_analysis/dna_index/long_null_reads.fa.ks_stats"
-working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3_ksstat_analysis/plots/"
+working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3_ksstat_analysis/plots/dna/"
 
 ########################################################################
 # Helper methods for generating plots
@@ -90,11 +90,19 @@ total_df <- rbind(pos_reads_df, null_reads_df)
 # Plot 1: Generate plot that looks at KS-statistics for positive/null reads
 ks_stat_plot <- make_ks_stat_plot(total_df)
 ks_stat_plot
+
 output_name <- paste(working_dir, "exp3_dna_long_ks_stat_points.pdf", sep="")
 ggsave(output_name, plot=ks_stat_plot, dpi=800, device="pdf", width=8, height=6)
+
+output_name <- paste(working_dir, "exp3_dna_long_ks_stat_points.jpeg", sep="")
+ggsave(output_name, plot=ks_stat_plot, dpi=800, device="jpeg", width=8, height=6)
 
 # Plot 2: Generate histogram to look at the percentage in each bin
 ks_stat_histo_plot <- make_ks_stat_histo_plot(total_df)
 ks_stat_histo_plot
+
 output_name <- paste(working_dir, "exp3_dna_long_ks_stat_density.pdf", sep="")
 ggsave(output_name, plot=ks_stat_histo_plot, dpi=800, device="pdf", width=8, height=6)
+
+output_name <- paste(working_dir, "exp3_dna_long_ks_stat_density.jpeg", sep="")
+ggsave(output_name, plot=ks_stat_histo_plot, dpi=800, device="jpeg", width=8, height=6)

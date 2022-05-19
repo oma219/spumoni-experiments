@@ -105,9 +105,16 @@ promotion_acc_plot
 output_name <- paste(working_dir, "exp3_promotion_min_accuracy.pdf", sep="")
 ggsave(output_name, plot=promotion_acc_plot, dpi=1200, device="pdf", width=8, height=6)
 
+output_name <- paste(working_dir, "exp3_promotion_min_accuracy.jpeg", sep="")
+ggsave(output_name, plot=promotion_acc_plot, dpi=800, device="jpeg", width=8, height=6)
+
 # Plot #2
 dna_acc_plot <- make_dna_acc_plot(total_dataset_df, full_index_df)
 dna_acc_plot
+
 output_name <- paste(working_dir, "exp3_dna_min_accuracy.pdf", sep="")
 ggsave(output_name, plot=dna_acc_plot, dpi=1200, device="pdf", width=8, height=6)
+
+output_name <- paste(working_dir, "exp3_dna_min_accuracy.jpeg", sep="")
+ggsave(output_name, plot=dna_acc_plot, dpi=1200, device="jpeg", width=8, height=6)
 

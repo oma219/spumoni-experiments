@@ -12,9 +12,9 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1b/illumina_ms_doc_analysis.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1b/ont_ms_doc_analysis.csv")
-working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1b/"
+data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/exp_1b/illumina_ms_doc_analysis.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/exp_1b/ont_ms_doc_analysis.csv")
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/exp_1b/"
 
 dataset_names <- c("E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria",
                     "E. faecalis", "Staphylococcus")
@@ -72,8 +72,12 @@ read_types <- c("Illumina", "ONT")
 for (input_file in data_paths) {
   input_df <- read.csv(input_file, header=TRUE)
   curr_plot <- make_group_bar_plot(input_df, read_types[pos])
-
+  
+  # Save a vector graphic & regular graphic
   output_name <- paste(working_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.pdf", sep="")
   ggsave(output_name, plot=curr_plot, dpi=1200, device="pdf", width=10, height=6)
+
+  output_name <- paste(working_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.jpeg", sep="")
+  ggsave(output_name, plot=curr_plot, dpi=800, device="jpeg", width=10, height=6)
   pos <- pos + 1
 }
