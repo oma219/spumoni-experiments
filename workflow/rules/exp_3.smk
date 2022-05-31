@@ -113,7 +113,7 @@ rule simulate_short_positive_reads_exp3:
     shell:
         """
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        mason_simulator -ir $positive_genome -n {num_reads_exp3} -o {output[0]} --illumina-read-length 150
+        mason_simulator -ir $positive_genome -n {num_reads_exp3} -v -o {output[0]} --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
         rm "$positive_genome.fai"
         """
 
@@ -125,7 +125,7 @@ rule simulate_long_positive_reads_exp3:
     shell:
         """
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        pbsim --depth 10.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean 0.95 $positive_genome
+        pbsim --depth 10.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $positive_genome
 
         cat exp3_reads/long/positive/positive_reads_*.fastq > exp3_reads/long/positive/positive_reads.fastq
         rm exp3_reads/long/positive/positive_reads_*.fastq
@@ -150,7 +150,7 @@ rule simulate_short_null_reads_exp3:
     shell:
         """
         null_genome={input}
-        mason_simulator -ir $null_genome -n {num_reads_exp3} -o {output[0]} --illumina-read-length 150
+        mason_simulator -ir $null_genome -n {num_reads_exp3} -v -o {output[0]} --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
         rm "$null_genome.fai"
         """
 
@@ -162,7 +162,7 @@ rule simulate_long_null_reads_exp3:
     shell:
         """
         null_genome={input}
-        pbsim --depth 0.10 --prefix exp3_reads/long/null/null_reads --hmm_model {pbsim_model} --accuracy-mean 0.95 $null_genome
+        pbsim --depth 0.10 --prefix exp3_reads/long/null/null_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $null_genome
 
         cat exp3_reads/long/null/null_reads_*.fastq > exp3_reads/long/null/null_reads.fastq
         rm exp3_reads/long/null/null_reads_*.fastq

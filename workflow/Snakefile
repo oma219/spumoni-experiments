@@ -19,6 +19,8 @@ num_reads_per_dataset = config["READS_PER_DATASET"]
 pbsim_model = config["PBSIM_MODEL"]
 dataset_name_exp2 = config["DATASET_NAME"]
 num_reads_exp3 = config["NUM_READS_EXP3"]
+illumina_mismatch_prob_exp3 = config["ILLUMINA_MISMATCH_PROB_EXP3"]
+long_read_acc_exp3 = config["LONG_READ_ACC_EXP3"]
 
 large_window_sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 window_sizes_exp3 = [w for w in range(7, 32)]
