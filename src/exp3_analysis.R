@@ -13,9 +13,9 @@ library(data.table)
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
 
-all_indexes_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3/data/exp3_total_results.csv"
-full_index_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3/data/exp3_full_index_results.csv"
-working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3/"
+all_indexes_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3b/data/exp3_total_results.csv"
+full_index_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3b/data/exp3_full_index_results.csv"
+working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3b/"
 
 ########################################################################
 # Helper methods for generating plots
@@ -45,7 +45,7 @@ make_promotion_acc_plot <- function(input_df, full_index_df) {
             legend.title=element_text(size=12),
             axis.text=element_text(size=12, color="black")) +
       scale_x_continuous(breaks=seq(6, 32, 2)) +
-      scale_y_continuous(breaks=seq(0.70, 1.0, 0.05)) +
+      scale_y_continuous(breaks=seq(0.60, 1.0, 0.05)) +
       scale_color_discrete(name="Read Length", labels=c("Long", "Short")) +
       geom_hline(yintercept=long_read_acc, linetype="dashed", color="#F8766D", size=0.75) +
       geom_hline(yintercept=short_read_acc, linetype="dashed", color="#00BFC4", size=0.75) +
@@ -102,6 +102,7 @@ full_index_df <- read.csv(full_index_data_path, header=TRUE)
 # Plot #1
 promotion_acc_plot <- make_promotion_acc_plot(total_dataset_df, full_index_df)
 promotion_acc_plot
+
 output_name <- paste(working_dir, "exp3_promotion_min_accuracy.pdf", sep="")
 ggsave(output_name, plot=promotion_acc_plot, dpi=1200, device="pdf", width=8, height=6)
 
@@ -116,5 +117,5 @@ output_name <- paste(working_dir, "exp3_dna_min_accuracy.pdf", sep="")
 ggsave(output_name, plot=dna_acc_plot, dpi=1200, device="pdf", width=8, height=6)
 
 output_name <- paste(working_dir, "exp3_dna_min_accuracy.jpeg", sep="")
-ggsave(output_name, plot=dna_acc_plot, dpi=1200, device="jpeg", width=8, height=6)
+ggsave(output_name, plot=dna_acc_plot, dpi=800, device="jpeg", width=8, height=6)
 
