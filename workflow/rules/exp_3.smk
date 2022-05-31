@@ -327,9 +327,6 @@ rule generate_analysis_file_exp3:
                 return size 
         
         with open(output[0], "w") as out_fd:
-
-            for file in input:
-                print(file)
             
             full_out_fd = open("exp3_analysis/exp3_full_index_results.csv", "w")
             full_out_fd.write("readlength,TP,FN,TN,FP,accuracy,pmlindexsize\n")
