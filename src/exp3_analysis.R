@@ -89,6 +89,31 @@ make_dna_acc_plot <- function(input_df, full_index_df) {
     return(plot)
 }
 
+make_accuracy_index_size_plot <- function(total_dataset_df) {
+  # create the plot
+  plot <- ggplot(total_dataset_df, aes(x=pmlindexsize, y=accuracy)) + 
+          geom_line(aes(color=readlength, group=interaction(indextype, readlength)))+
+          geom_point(aes(color=readlength, shape=indextype)) +
+          theme_bw() +
+          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
+                axis.title.x=element_text(size =14),
+                axis.title.y=element_text(size=14),
+                legend.position = "bottom", 
+                legend.text=element_text(size=12),
+                legend.box="vertical",
+                legend.title=element_text(size=12),
+                axis.text=element_text(size=12, color="black")) +
+          scale_x_continuous(breaks=seq(8000000, 80000000, 8000000)) +
+          scale_y_continuous(breaks=seq(0.60, 1.0, 0.05)) +
+          scale_color_discrete(name="Read Length", labels=c("Long", "Short")) +
+          scale_shape_discrete(name="Minimizer Type", labels=c("DNA", "Promotion")) +
+          #geom_hline(yintercept=long_read_acc, linetype="dashed", color="#F8766D", size=0.75) +
+          #geom_hline(yintercept=short_read_acc, linetype="dashed", color="#00BFC4", size=0.75) +
+          labs(x="Index Size (bytes)",
+               y="Accuracy",
+               title="Binary read classification for different minimizer schemes and index sizes") 
+  return(plot)
+}
 
 #########################################################################
 # Start of the "main" method of code ...
@@ -119,3 +144,12 @@ ggsave(output_name, plot=dna_acc_plot, dpi=1200, device="pdf", width=8, height=6
 output_name <- paste(working_dir, "exp3_dna_min_accuracy.jpeg", sep="")
 ggsave(output_name, plot=dna_acc_plot, dpi=800, device="jpeg", width=8, height=6)
 
+# Plot #3
+acc_index_plot <- make_accuracy_index_size_plot(total_dataset_df)
+acc_index_plot
+
+output_name <- paste(working_dir, "exp3_accuracy_index_size.pdf", sep="")
+ggsave(output_name, plot=acc_index_plot, dpi=1200, device="pdf", width=8, height=6)
+
+output_name <- paste(working_dir, "exp3_accuracy_index_size.jpeg", sep="")
+ggsave(output_name, plot=acc_index_plot, dpi=800, device="jpeg", width=8, height=6)
