@@ -14,12 +14,12 @@ library(ggpubr)
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
 
-pos_class_reads <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3c_ksstat_analysis/dna_index/long_positive_reads.fa.ks_stats"
-null_class_reads <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3c_ksstat_analysis/dna_index/long_null_reads.fa.ks_stats"
-working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3c_ksstat_analysis/plots/dna/"
+pos_class_reads <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d_ksstat_analysis/promotion_index/long_positive_reads.fa.ks_stats"
+null_class_reads <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d_ksstat_analysis/promotion_index/long_null_reads.fa.ks_stats"
+working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d_ksstat_analysis/plots/promotion/"
 
 read_length <- "long"
-index_type <- "dna"
+index_type <- "promotion"
 
 ########################################################################
 # Helper methods for generating plots
@@ -47,7 +47,7 @@ make_ks_stat_plot <- function(total_df) {
       geom_vline(xintercept=threshold, linetype="dashed", color = "black", size=1.5) +
       labs(x="KS-statistic",
            y="Position in the Read",
-           title="KS-statistics across positive and null long reads using DNA minimizers") 
+           title="KS-statistics across positive and null long reads using promoted minimizers") 
     return(plot)
 }
 
@@ -75,7 +75,7 @@ make_ks_stat_histo_plot <- function(total_df) {
     #geom_vline(xintercept=0.10, linetype="dashed", color = "black", size=1.5) +
     labs(x="KS-statistic",
          y="Density",
-         title="Density of KS-statistics for long reads using DNA minimizers") 
+         title="Density of KS-statistics for long reads using promoted minimizers") 
   return(plot)
 }
 
@@ -117,7 +117,6 @@ ggsave(output_name, plot=ks_stat_histo_plot, dpi=800, device="pdf", width=8, hei
 
 output_name <- paste(working_dir, "exp3_", index_type, "_", read_length, "_ks_stat_density.jpeg", sep="")
 ggsave(output_name, plot=ks_stat_histo_plot, dpi=800, device="jpeg", width=8, height=6)
-
 
 # Generate a combined plot
 combined_plots <- ggarrange(ks_stat_plot, ks_stat_histo_plot, 

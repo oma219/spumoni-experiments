@@ -13,9 +13,9 @@ library(data.table)
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
 
-all_indexes_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3c/data/exp3_total_results.csv"
-full_index_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3c/data/exp3_full_index_results.csv"
-working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3c/"
+all_indexes_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d/data/exp3_total_results.csv"
+full_index_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d/data/exp3_full_index_results.csv"
+working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d/"
 
 ########################################################################
 # Helper methods for generating plots
