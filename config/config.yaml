@@ -1,4 +1,4 @@
-DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp_3"
+DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp_4"
 NUM_DATASETS: 1
 REPO_DIR: "/home/oahmed6/spumoni_exps"
 SPUMONI_DIR: "/home/oahmed6/spumoni/build"
@@ -6,5 +6,8 @@ PBSIM_MODEL: "/home/oahmed6/pbsim2/data/R94.model"
 READS_PER_DATASET: 2000
 DATASET_NAME: "ecoli_10"
 NUM_READS_EXP3: 5000
-ILLUMINA_MISMATCH_PROB_EXP3: 0.015
-LONG_READ_ACC_EXP3: 0.925
+ILLUMINA_MISMATCH_PROB_EXP3: 0.01
+LONG_READ_ACC_EXP3: 0.95
+NUM_READS_EXP4: 10000
+ILLUMINA_MISMATCH_PROB_EXP4: 0.01
+LONG_READ_ACC_EXP4: 0.95
