@@ -115,7 +115,7 @@ rule simulate_long_positive_reads_exp4:
     shell:
         """
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        pbsim --depth 10.0 --prefix exp4_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp4} $positive_genome
+        pbsim --depth 30.0 --prefix exp4_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp4} $positive_genome
 
         cat exp4_reads/long/positive/positive_reads_*.fastq > exp4_reads/long/positive/positive_reads.fastq
         rm exp4_reads/long/positive/positive_reads_*.fastq
@@ -242,7 +242,7 @@ rule classify_using_dna_index_exp4:
 
         ls -l {input[5]} | awk '{{print $5}}' > {output[4]}
 
-        rm -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/
+        rm -r exp4_dna_index_k{wildcards.k}_w{wildcards.w}_bin{wildcards.b}/
         """
 
 # Section 2.6: Generate report files and compute the confusion matrix

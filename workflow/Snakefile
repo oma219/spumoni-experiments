@@ -31,7 +31,7 @@ illumina_mismatch_prob_exp4 = config["ILLUMINA_MISMATCH_PROB_EXP4"]
 long_read_acc_exp4 = config["LONG_READ_ACC_EXP4"]
 
 window_sizes_exp4 = [w for w in range(7, 24)]
-bin_sizes_exp4 = [50, 75, 100, 125, 150]
+bin_sizes_exp4 = [50, 75, 150, 250, 350]
 
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
