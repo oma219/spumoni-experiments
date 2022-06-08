@@ -17,13 +17,13 @@ repo_dir = config["REPO_DIR"]
 spumoni_dir = config["SPUMONI_DIR"]
 num_reads_per_dataset = config["READS_PER_DATASET"]
 pbsim_model = config["PBSIM_MODEL"]
+
+large_window_sizes_exp2 = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 dataset_name_exp2 = config["DATASET_NAME"]
 
 num_reads_exp3 = config["NUM_READS_EXP3"]
 illumina_mismatch_prob_exp3 = config["ILLUMINA_MISMATCH_PROB_EXP3"]
 long_read_acc_exp3 = config["LONG_READ_ACC_EXP3"]
-
-large_window_sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 window_sizes_exp3 = [w for w in range(7, 32)]
 
 num_reads_exp4 = config["NUM_READS_EXP4"]
@@ -55,10 +55,10 @@ include: "rules/exp_4.smk"
 #         "exp3_analysis/exp3_full_index_results.csv",
 
 # Rule for experiment 2 ...
-# rule all:
-#     input:
-#         "total_results/exp2_full_index_stats.csv",
-#         "total_results/exp2_index_stats.csv"
+rule all:
+    input:
+        "total_results/exp2_full_index_stats.csv",
+        "total_results/exp2_index_stats.csv"
 
 # Rule for experiment 1 ...
 # rule all:

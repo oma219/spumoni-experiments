@@ -149,7 +149,7 @@ rule gather_index_stats_for_full_index_exp2:
 
 rule gather_all_index_stats_promotion_exp2:
     input:
-        expand("results/{type}/index_results_k{k}_w{w}.txt", type=["promotion", "dna"], k="4", w=large_window_sizes)
+        expand("results/{type}/index_results_k{k}_w{w}.txt", type=["promotion", "dna"], k="4", w=large_window_sizes_exp2)
     output:
         "total_results/exp2_index_stats.csv"
     run:
