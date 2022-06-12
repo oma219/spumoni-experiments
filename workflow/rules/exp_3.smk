@@ -114,6 +114,7 @@ rule simulate_short_positive_reads_exp3:
         "exp3_reads/short/positive/positive_reads.fa"
     shell:
         """
+        set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
         mason_simulator -ir $positive_genome -n {num_reads_exp3} -v -o {output[0]} --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
         rm "$positive_genome.fai"
