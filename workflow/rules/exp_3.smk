@@ -21,7 +21,7 @@ def get_genomes_in_dataset_exp3(wildcards):
     for data_file in os.listdir(f"data/dataset_1"):
         if data_file.endswith(".fna"):
             file_list.append(f"{base_dir}/data/dataset_1/" + data_file)
-    return file_list
+    return file_list[:10]
 
 
 def get_null_genomes_exp3(wildcards):
@@ -126,8 +126,10 @@ rule simulate_long_positive_reads_exp3:
         "exp3_reads/long/positive/positive_reads.fa"
     shell:
         """
+        set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        pbsim --depth 10.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $positive_genome
+        pbsim --depth 20.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $positive_genome
+        echo "step_2"
 
         cat exp3_reads/long/positive/positive_reads_*.fastq > exp3_reads/long/positive/positive_reads.fastq
         rm exp3_reads/long/positive/positive_reads_*.fastq
@@ -164,7 +166,7 @@ rule simulate_long_null_reads_exp3:
     shell:
         """
         null_genome={input}
-        pbsim --depth 0.10 --prefix exp3_reads/long/null/null_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $null_genome
+        pbsim --depth 0.20 --prefix exp3_reads/long/null/null_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $null_genome
 
         cat exp3_reads/long/null/null_reads_*.fastq > exp3_reads/long/null/null_reads.fastq
         rm exp3_reads/long/null/null_reads_*.fastq

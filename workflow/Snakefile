@@ -19,7 +19,7 @@ num_reads_per_dataset = config["READS_PER_DATASET"]
 pbsim_model = config["PBSIM_MODEL"]
 
 large_window_sizes_exp2 = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
-dataset_name_exp2 = config["DATASET_NAME"]
+dataset_name_exp2 = config["DATASET_NAME_EXP2"]
 
 num_reads_exp3 = config["NUM_READS_EXP3"]
 illumina_mismatch_prob_exp3 = config["ILLUMINA_MISMATCH_PROB_EXP3"]
@@ -49,16 +49,16 @@ include: "rules/exp_3.smk"
 include: "rules/exp_4.smk"
 
 # Rule for experiment 3 ...
-# rule all:
-#     input:
-#         "exp3_analysis/exp3_total_results.csv",
-#         "exp3_analysis/exp3_full_index_results.csv",
-
-# Rule for experiment 2 ...
 rule all:
     input:
-        "total_results/exp2_full_index_stats.csv",
-        "total_results/exp2_index_stats.csv"
+        "exp3_analysis/exp3_total_results.csv",
+        "exp3_analysis/exp3_full_index_results.csv",
+
+# Rule for experiment 2 ...
+# rule all:
+#     input:
+#         "total_results/exp2_full_index_stats.csv",
+#         "total_results/exp2_index_stats.csv"
 
 # Rule for experiment 1 ...
 # rule all:
