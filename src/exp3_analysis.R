@@ -13,9 +13,9 @@ library(data.table)
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
 
-all_indexes_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d/data/exp3_total_results.csv"
-full_index_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d/data/exp3_full_index_results.csv"
-working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3d/"
+all_indexes_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3/trial_2/exp_3/data/exp3_total_results.csv"
+full_index_data_path <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_3/trial_2/exp_3/data/exp3_full_index_results.csv"
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_3/trial_2/exp_3/"
 
 ########################################################################
 # Helper methods for generating plots
@@ -90,8 +90,11 @@ make_dna_acc_plot <- function(input_df, full_index_df) {
 }
 
 make_accuracy_index_size_plot <- function(total_dataset_df) {
+  # Restrict the focus to the interesting sections
+  subset_df <- subset(total_dataset_df, total_dataset_df$w > 7 & total_dataset_df$w < 21)
+  
   # create the plot
-  plot <- ggplot(total_dataset_df, aes(x=pmlindexsize, y=accuracy)) + 
+  plot <- ggplot(subset_df, aes(x=pmlindexsize, y=accuracy)) + 
           geom_line(aes(color=readlength, group=interaction(indextype, readlength)))+
           geom_point(aes(color=readlength, shape=indextype)) +
           theme_bw() +
@@ -103,8 +106,8 @@ make_accuracy_index_size_plot <- function(total_dataset_df) {
                 legend.box="vertical",
                 legend.title=element_text(size=12),
                 axis.text=element_text(size=12, color="black")) +
-          scale_x_continuous(breaks=seq(8000000, 80000000, 8000000)) +
-          scale_y_continuous(breaks=seq(0.60, 1.0, 0.05)) +
+          scale_x_continuous(breaks=seq(11000000, 60000000, 10000000)) +
+          scale_y_continuous(breaks=seq(0.85, 1.0, 0.025)) +
           scale_color_discrete(name="Read Length", labels=c("Long", "Short")) +
           scale_shape_discrete(name="Minimizer Type", labels=c("DNA", "Promotion")) +
           #geom_hline(yintercept=long_read_acc, linetype="dashed", color="#F8766D", size=0.75) +
