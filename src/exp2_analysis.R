@@ -12,13 +12,11 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2a/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2b/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2c/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2d/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2e/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2f/exp2_index_stats.csv")
-working_dir <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/"
+data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2a/exp2_index_stats.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2b/exp2_index_stats.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2c/exp2_index_stats.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2d/exp2_index_stats.csv")
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_2/trial_2/"
 
 
 ########################################################################
@@ -41,8 +39,7 @@ make_n_plot <- function(input_df) {
           scale_x_continuous(breaks=seq(0, 32, 2)) +
           scale_y_continuous(breaks=seq(0, 1.5, 0.2)) +
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
-          scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
-                                                        "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
+          scale_shape_discrete(name="Dataset", labels=c("Ecoli_250", "Ecoli_500", "Salmonella_250", "Salmonella_500")) +
           labs(x="Window size (w)",
                y="Relative n",
                title="Size of Reference File After Different Types of Minimizer Digestion") 
@@ -65,8 +62,7 @@ make_nr_plot <- function(input_df) {
           scale_x_continuous(breaks=seq(0, 32, 2)) +
           scale_y_continuous(breaks=seq(0, 1.5, 0.2)) +
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
-          scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
-                                                        "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
+          scale_shape_discrete(name="Dataset", labels=c("Ecoli_250", "Ecoli_500", "Salmonella_250", "Salmonella_500")) +
           labs(x="Window size (w)",
                y="Relative n/r",
                title="Relative Run Length (n/r) for Different Datasets After Minimizer Digestion") 
@@ -89,10 +85,9 @@ make_ms_index_plot <- function(input_df) {
           scale_x_continuous(breaks=seq(0, 32, 2)) +
           scale_y_continuous(breaks=seq(0, 1.5, 0.2)) +
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
-          scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
-                                                        "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
+          scale_shape_discrete(name="Dataset", labels=c("Ecoli_250", "Ecoli_500", "Salmonella_250", "Salmonella_500")) +
           labs(x="Window size (w)",
-               y="New index size/Old index size",
+               y="Relative Minimizer Index Size",
                title="Relative MS Index Size for Different Datasets After Minimizer Digestion") 
   return(plot)
 }
@@ -113,11 +108,10 @@ make_pml_index_plot <- function(input_df) {
           scale_x_continuous(breaks=seq(0, 32, 2)) +
           scale_y_continuous(breaks=seq(0, 1.5, 0.2)) +
           scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
-          scale_shape_discrete(name="Dataset", labels=c("Ecoli_10", "Ecoli_25", "Ecoli_50",
-                                                        "Salmonella_10", "Salmonella_25", "Salmonella_50")) +
+          scale_shape_discrete(name="Dataset", labels=c("Ecoli_250", "Ecoli_500", "Salmonella_250", "Salmonella_500")) +
           labs(x="Window size (w)",
-               y="New index Size/Old index Size",
-               title="Relative PML Index Size for Different Datasets After Minimizer Digestion") 
+               y="Relative Minimizer Index Size",
+               title="Relative SPUMONI Index Size for Different Datasets After Minimizer Digestion") 
   return(plot)
 }
 
@@ -137,24 +131,23 @@ for (input_file in data_paths) {
 full_df <- do.call(rbind, datalist)
 
 # Load in the statistics for full-sized indexes
-full_stat_files <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2a/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2b/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2c/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2d/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2e/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/exp_2f/exp2_full_index_stats.csv")
+full_stat_files <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2a/exp2_full_index_stats.csv",
+                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2b/exp2_full_index_stats.csv",
+                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2c/exp2_full_index_stats.csv",
+                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2d/exp2_full_index_stats.csv")
 
+# Divide all the values by the full-index version
 for (stat_file in full_stat_files) {
   curr_stats <- read.csv(stat_file, header=FALSE)
   
   # Read stats for full index
   dataset_name <- curr_stats[,1]
-  n <- as.integer(curr_stats[,2])
-  r <- as.integer(curr_stats[,3])
+  n <- as.numeric(curr_stats[,2])
+  r <- as.numeric(curr_stats[,3])
   n_over_r <- as.double(curr_stats[,4])
-  ms_size <- as.integer(curr_stats[,5])
-  slp_size <- as.integer(curr_stats[,6])
-  pml_size <- as.integer(curr_stats[,7])
+  ms_size <- as.numeric(curr_stats[,5])
+  slp_size <- as.numeric(curr_stats[,6])
+  pml_size <- as.numeric(curr_stats[,7])
   
   # Normalize all the minimizer index stats
   full_df$n[full_df$name == dataset_name] <- full_df$n[full_df$name == dataset_name]/n
