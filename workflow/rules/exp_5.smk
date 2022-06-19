@@ -115,12 +115,11 @@ rule filter_all_reads_by_mapq_exp5:
     input:
         "exp5_step_5/zymo_mc_read_aln.sam"
     output:
-        "exp5_step_6/zymo_mc_read_aln.filtered.sam"
+        "exp5_step_6/zymo_mc_read_aln.filtered.sam",
+        "exp5_step_6/zymo_mc_read_aln.filtered.sorted.sam"
     shell:
         """
-        samtools view -q 30 {input} > {output}
+        samtools view -u -q 30 {input} > {output[0]}
+        samtools sort {output[0]} -o {output[1]}
         """
-    
-    
-
-# ./minimap2 -ax map-ont ref.fa ont.fq.gz > aln.sam  
+ 
