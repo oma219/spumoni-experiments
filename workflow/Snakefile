@@ -47,6 +47,11 @@ include: "rules/exp_1.smk"
 include: "rules/exp_2.smk"
 include: "rules/exp_3.smk"
 include: "rules/exp_4.smk"
+include: "rules/exp_5.smk"
+
+
+# Rule for experiment 4 ...
+# TODO: add final files here
 
 # Rule for experiment 3 ...
 rule all:

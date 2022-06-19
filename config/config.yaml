@@ -1,4 +1,4 @@
-DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp_3"
+DATA_ROOT: "/home/oahmed/storage/storage1/spumoni_exps/exp_5"
 NUM_DATASETS: 1
 REPO_DIR: "/home/oahmed6/spumoni_exps"
 SPUMONI_DIR: "/home/oahmed6/spumoni/build"
