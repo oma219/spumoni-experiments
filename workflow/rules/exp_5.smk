@@ -43,7 +43,7 @@ def get_all_zymo_genomes_exp5(wildcards):
         exit(-1)
     
     # Move the yeast to be last in list since it important for later rules
-    yeast_file = f"{base_dir}/data/true_set/Saccharomyces_cerevisiae_draft_genome.fasta"
+    yeast_file = f"{base_dir}/data/true_set/yeast_complete_genome.fasta"
     assert yeast_file in file_list
 
     file_list.remove(yeast_file)
