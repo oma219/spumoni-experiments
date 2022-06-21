@@ -54,7 +54,7 @@ def parse_arguments():
     parser.add_argument("-i", dest="input_file", help="input file that we will read from", required=True)
     parser.add_argument("-n", dest="num_reads", help="number of reads that will be generated.", type=int, required=True)
     parser.add_argument("-l", dest="read_length", help="length of the sequencing reads.", type=int, required=True)
-    parser.add_argument("-q", action="store_true", dest="fastq_file", default="false", help="output a fastq file (default: fasta)")
+    parser.add_argument("-q", action="store_true", dest="fastq_file", default=False, help="output a fastq file (default: fasta)")
     args = parser.parse_args()
     return args
 
