@@ -19,7 +19,8 @@ def run_command(command, loading_bar, sleep_time=1):
     some time to run like queries to databases or downloading genomes.
     """
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    
+    loading_bar = False # Omar - set to False since it was leading to errors
+
     if loading_bar:
         print("Loading ...", end='', flush="True")
         while process.poll() is None:
@@ -27,7 +28,6 @@ def run_command(command, loading_bar, sleep_time=1):
             print(".", end='', flush="True")
             (output, error) = process.communicate()
         (output, error) = process.communicate()
-        print()
     else:
         (output, error) = process.communicate()
 
@@ -69,7 +69,7 @@ def find_refseq_ftp_paths(requested_species, using_file_input):
     else:
         print(f"\nError occurred during database query: {output}")
         exit(1)
-
+    
     current_command = command.format(requested_species, requested_species)
     output, error = run_command(current_command, False)
     output_lines = output.split("\n")
