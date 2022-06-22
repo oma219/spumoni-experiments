@@ -51,6 +51,18 @@ def get_all_zymo_genomes_exp5(wildcards):
 
     return file_list
 
+def list_of_genomes_to_index_exp5(wildcards):
+    """
+    Returns all the paths to files to be included
+    in the index.
+    """
+    input_files = []
+    for num in range(1, num_datasets+1):
+        for data_file in os.listdir(f"data/dataset_{num}"):
+            if data_file.endswith(".fna"):
+                input_files.append(f"{base_dir}/data/dataset_{num}/{data_file}")
+    return input_files
+
 ####################################################
 # Section 2: Rules needed for this experiment type
 ####################################################
@@ -144,6 +156,63 @@ rule generate_reference_seq_name_list_exp5:
             i=$((i+1))
         done
         """
+
+# Section 2.4: Build indexes using SPUMONI (either promoted minimizers or
+#              DNA minimizers) or minimap2 indexes
+
+rule build_full_reference_to_index_exp5:
+    input:
+        list_of_genomes_to_index_exp5
+    output:
+        "exp5_full_ref/full_ref.fa"
+    shell:
+        """
+        cat {input} > {output}
+        """
+
+rule build_spumoni_promoted_index_exp5:
+    input:
+        "exp5_full_ref/full_ref.fa"
+    output:
+        "exp5_indexes/spumoni_promoted_k{k}_w{w}/spumoni_full_ref.bin"
+    shell:
+        """
+        # Copy over reference file to specific folder, and build the index
+        curr_ref_file="exp5_indexes/spumoni_promoted_k{wildcards.k}_w{wildcards.w}/full_ref.fa"
+        log_file="exp5_indexes/spumoni_promoted_k{wildcards.k}_w{wildcards.w}/full_ref.fa.log"
+        cp {input[0]} $curr_ref_file
+        spumoni build -r $curr_ref_file -M -P -m -K {wildcards.k} -W {wildcards.w} &> $log_file
+        """
+
+rule build_spumoni_dna_index_exp5:
+    input:
+        "exp5_full_ref/full_ref.fa"
+    output:
+        "exp5_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa"
+    shell:
+        """
+        # Copy over reference file to specific folder, and build the index
+        curr_ref_file="exp5_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa"
+        log_file="exp5_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa.log"
+        cp {input[0]} $curr_ref_file
+        spumoni build -r $curr_ref_file -M -P -t -K {wildcards.k} -W {wildcards.w} &> $log_file
+        """
+
+rule build_minimap2_index_exp5:
+    input:
+        "exp5_full_ref/full_ref.fa"
+    output:
+        "exp5_indexes/minimap2_index/full_ref.mmi"
+    shell:
+        """
+        # Copy over reference file to specific folder, and build the index
+        curr_ref_file="exp5_indexes/minimap2_index/full_ref.fa"
+        log_file="exp5_indexes/minimap2_index/full_ref.fa.log"
+        cp {input[0]} $curr_ref_file 
+        minimap2 -x map-ont -d {output} {input} &> $log_file
+        """
+
+
 
 
 
