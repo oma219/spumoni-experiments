@@ -26,10 +26,11 @@ def main(args):
     curr_seq = ""
     full_read_set = []
     for line in input_fasta:
-        if ">" in line and len(curr_seq) > 0:
+        header_line = (">" in line)
+        if header_line and len(curr_seq) > 0:
             full_read_set += generate_reads_for_sequence(curr_seq, args.num_reads, args.read_length)
             curr_seq = ""
-        else:
+        elif not header_line:
             curr_seq += line.strip()
     input_fasta.close()
     
