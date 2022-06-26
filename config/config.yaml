@@ -3,6 +3,8 @@ NUM_DATASETS: 7
 REPO_DIR: "/home/oahmed6/spumoni_exps"
 SPUMONI_DIR: "/home/oahmed6/spumoni/build"
 PBSIM_MODEL: "/home/oahmed6/pbsim2/data/R94.model"
+TIME_PROG: "/usr/bin/time"
+TIME_FORMAT: "--format='user= %U system= %S elapsed= %e CPU= %P MemMax= %M'"
 READS_PER_DATASET: 2000
 DATASET_NAME_EXP2: "ecoli_500"
 NUM_READS_EXP3: 10000

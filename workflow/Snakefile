@@ -17,6 +17,8 @@ repo_dir = config["REPO_DIR"]
 spumoni_dir = config["SPUMONI_DIR"]
 num_reads_per_dataset = config["READS_PER_DATASET"]
 pbsim_model = config["PBSIM_MODEL"]
+time_prog = config["TIME_PROG"]
+time_format = config["TIME_FORMAT"]
 
 large_window_sizes_exp2 = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 dataset_name_exp2 = config["DATASET_NAME_EXP2"]
@@ -54,10 +56,10 @@ include: "rules/exp_5.smk"
 # TODO: add final files here
 
 # Rule for experiment 3 ...
-rule all:
-    input:
-        "exp3_analysis/exp3_total_results.csv",
-        "exp3_analysis/exp3_full_index_results.csv",
+# rule all:
+#     input:
+#         "exp3_analysis/exp3_total_results.csv",
+#         "exp3_analysis/exp3_full_index_results.csv"
 
 # Rule for experiment 2 ...
 # rule all:

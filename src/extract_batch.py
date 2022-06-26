@@ -17,6 +17,12 @@ def main(args):
     read_file = open(args.full_read_file, "r")
     all_reads = [x.strip() for x in read_file.readlines()]
 
+    # Build set of reads to remove if given ...
+    removed_reads = set()
+    if len(args.reads_to_remove) > 0:
+        with open(args.reads_to_remove, "r") as input_fd:
+            all_lines = [removed_reads.add(x.strip()) for x in input_fd.readlines()]
+            
     # Iterate through each read, extract batch and print
     for i in range(0, len(all_reads), 2):
         read_name = all_reads[i].split()[0][1:]
@@ -24,11 +30,12 @@ def main(args):
         read_batches = [read_seq[i:i+args.batch_size] for i in range(0, len(read_seq), args.batch_size)]
 
         # Output depends on the method
-        if args.spumoni_method:
-            print(f">{read_name}\n{read_batches[args.batch_num-1]}")
-        elif args.alignment_method:
-            curr_batch = "".join(read_batches[:args.batch_num])
-            print(f">{read_name}\n{curr_batch}")
+        if read_name not in removed_reads:
+            if args.spumoni_method:
+                print(f">{read_name}\n{read_batches[args.batch_num-1]}")
+            elif args.alignment_method:
+                curr_batch = "".join(read_batches[:args.batch_num])
+                print(f">{read_name}\n{curr_batch}")
             
     read_file.close()
 
@@ -39,6 +46,7 @@ def parse_arguments():
     parser.add_argument("-i", dest="full_read_file", help="path to full input reads.", required=True)
     parser.add_argument("-n", dest="batch_num", help="batch number from the ONT sequencer", required=True, default=0, type=int)
     parser.add_argument("-s", dest="batch_size", help="size of the batch of data in bp", required=True, default=180, type=int)
+    parser.add_argument("-r", dest="reads_to_remove", help="reads to remove from printing", default="")
     parser.add_argument("--spumoni", dest="spumoni_method", action="store_true", help="using spumoni to classify the batch", default=False)
     parser.add_argument("--alignment", dest="alignment_method", action="store_true", help="using alignment to classify the batch", default=False)
     args = parser.parse_args()
@@ -61,6 +69,7 @@ def check_arguments(args):
     if args.spumoni_method and args.alignment_method:
         print("Error: you need to specify exactly one method of classification")
         exit(1)
+    
 
 if __name__ == "__main__":
     args = parse_arguments()

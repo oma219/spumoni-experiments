@@ -63,6 +63,17 @@ def list_of_genomes_to_index_exp5(wildcards):
                 input_files.append(f"{base_dir}/data/dataset_{num}/{data_file}")
     return input_files
 
+def get_all_genomes_to_index_for_specific_species(wildcards):
+    """
+    Returns all the paths to genomes included in index for
+    a particular species.
+    """
+    input_files = []
+    for data_file in os.listdir(f"data/dataset_{wildcards.num}"):
+        if data_file.endswith(".fna"):
+            input_files.append(f"{base_dir}/data/dataset_{wildcards.num}/{data_file}")
+    return input_files
+
 ####################################################
 # Section 2: Rules needed for this experiment type
 ####################################################
@@ -233,35 +244,173 @@ rule build_minimap2_index_exp5:
 #              For SPUMONI, it will just be the current batch while for minimap2 it will
 #              a consistently longer prefix of the read.
 
-rule extract_batch_of_data_for_spumoni_exp5:
+rule extract_first_batch_of_data_for_spumoni_exp5:
     input:
         "exp5_read_sets/pos_reads.fa",
         "exp5_read_sets/null_reads.fa"
     output:
-        "exp5_results/spumoni_{type}_k{k}_w{w}/{class}_reads/batch_{num}/curr_batch.fa"
+        "exp5_results/spumoni_{type}_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa"
     shell:
         """
         python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
-        -n {wildcards.num} -s 180 --spumoni > {output}
+        -n 1 -s 180 --spumoni > {output}
         """
 
-rule extract_batch_of_data_for_minimap2_exp5:
+rule extract_first_batch_of_data_for_minimap2_exp5:
     input:
         "exp5_read_sets/pos_reads.fa",
         "exp5_read_sets/null_reads.fa"
     output:
-        "exp5_results/minimap2/{class}_reads/batch_{num}/curr_batch.fa"
+        "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.fa"
     shell:
         """
         python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
-        -n {wildcards.num} -s 180 --alignment > {output}
+        -n 1 -s 180 --alignment > {output}
         """
 
+# Section 2.6: Classify the first batch of data using SPUMONI and minimap2
 
+rule classify_first_batch_using_spumoni_promoted_exp5:
+    input:
+        "exp5_indexes/spumoni_promoted_k{k}_w{w}/spumoni_full_ref.bin",
+        "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa"
+    output:
+        "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.report",
+        "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.resources"
+    shell:
+        """
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -m -K {wildcards.k} -W {wildcards.w} -c
+        """
 
+rule classify_first_batch_using_spumoni_dna_exp5:
+    input:
+        "exp5_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa",
+        "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa"
+    output:
+        "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.report",
+        "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.resources"
+    shell:
+        """
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -a -K {wildcards.k} -W {wildcards.w} -c
+        """
 
+rule classify_first_batch_using_minimap2_exp5:
+    input:
+        "exp5_indexes/minimap2_index/full_ref.mmi",
+        "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.fa"
+    output:
+        "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.sam",
+        "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.resources"
+    shell:
+        """
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} {input[1]} > {output[0]}
+        """
 
+# Section 2.7: Parse out the reference names in each class, and store them to be used when
+#              we try to identify what species each read is mapping to.
 
+rule parse_ref_names_from_full_dataset_exp5:
+    input:
+        get_all_genomes_to_index_for_specific_species
+    output:
+        "exp5_index_ref_name_lists/class_{num}.txt"
+    shell:
+        """
+        for file in {input}; do
+            grep '^>' $file | awk '{{print substr($1,2)}}' >> "exp5_index_ref_name_lists/class_{wildcards.num}.txt"
+        done
+        """
+    
+# Section 2.8: Determine which reads each method classified and remove those from the first 
+#              batch when creating the second batch
 
+rule determine_reads_to_remove_for_second_batch_spumoni_exp5:
+    input:
+        "exp5_results/spumoni_{type}_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.report"
+    output:
+        "exp5_results/spumoni_{type}_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.reads_to_remove"
+    shell:
+        """
+        python3 {repo_dir}/src/process_spumoni_report.py -i {input[0]} -l {input[0]} -o {output}
+        """
+
+rule determine_reads_to_remove_for_second_batch_minimap2_exp5:
+    input:
+        "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.sam",
+        expand("exp5_index_ref_name_lists/class_{num}.txt", num=range(1, 8))
+    output:
+        "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.fa.reads_to_remove"
+    shell:
+        """
+        python3 {repo_dir}/src/process_minimap2_sam.py -s {input[0]} -o {output} -r exp5_index_ref_name_lists/class_{{1..7}}.txt
+        """
+
+# Section 2.9: Extract the second batch of data for minimap2 and SPUMONI. This
+#              time we will take into account the reads that need to be excluded
+#              since they have already been classified.
+
+rule extract_second_batch_of_data_for_spumoni_exp5:
+    input:
+        "exp5_read_sets/pos_reads.fa",
+        "exp5_read_sets/null_reads.fa",
+        "exp5_results/spumoni_{type}_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.reads_to_remove"
+    output:
+        "exp5_results/spumoni_{type}_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa"
+    shell:
+        """
+        python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
+        -n 1 -s 180 -r {input[2]}  --spumoni > {output}
+        """
+
+rule extract_second_batch_of_data_for_minimap2_exp5:
+    input:
+        "exp5_read_sets/pos_reads.fa",
+        "exp5_read_sets/null_reads.fa",
+        "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.fa.reads_to_remove"
+    output:
+        "exp5_results/minimap2/{class}_reads/batch_2/curr_batch.fa"
+    shell:
+        """
+        python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
+        -n 1 -s 180 -r {input[2]} --alignment > {output}
+        """
+
+# Section 2.10: Classify the second batch of data given using SPUMONI and minimap2
+
+rule classify_second_batch_using_spumoni_promoted_exp5:
+    input:
+        "exp5_indexes/spumoni_promoted_k{k}_w{w}/spumoni_full_ref.bin",
+        "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa"
+    output:
+        "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa.report",
+        "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa.resources"
+    shell:
+        """
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -m -K {wildcards.k} -W {wildcards.w} -c
+        """
+
+rule classify_second_batch_using_spumoni_dna_exp5:
+    input:
+        "exp5_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa",
+        "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa"
+    output:
+        "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa.report",
+        "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa.resources"
+    shell:
+        """
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -a -K {wildcards.k} -W {wildcards.w} -c
+        """
+
+rule classify_second_batch_using_minimap2_exp5:
+    input:
+        "exp5_indexes/minimap2_index/full_ref.mmi",
+        "exp5_results/minimap2/{class}_reads/batch_2/curr_batch.fa"
+    output:
+        "exp5_results/minimap2/{class}_reads/batch_2/curr_batch.sam",
+        "exp5_results/minimap2/{class}_reads/batch_2/curr_batch.resources"
+    shell:
+        """
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} {input[1]} > {output[0]}
+        """
 
  
