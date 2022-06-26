@@ -157,6 +157,23 @@ rule generate_reference_seq_name_list_exp5:
         done
         """
 
+rule generate_separate_read_files_for_each_class_exp5:
+    input:
+        expand("exp5_ref_name_lists/class_{n}.txt", n=range(1, 9)),
+        "exp5_intermediate/step_6/zymo_mc_read_aln.filtered.sorted.sam"
+    output:
+        "exp5_read_sets/pos_reads.fa",
+        "exp5_read_sets/null_reads.fa"
+    shell:
+        """
+        python3 {repo_dir}/src/classify_reads_sam.py \
+        -i exp5_intermediate/step_6/zymo_mc_read_aln.filtered.sorted.sam \
+        -p exp5_ref_name_lists/class_{{1..7}}.txt \
+        -n exp5_ref_name_lists/class_8.txt \
+        -o exp5_read_sets/ \
+        -r exp5_intermediate/step_1/sampled_reads.fastq
+        """
+
 # Section 2.4: Build indexes using SPUMONI (either promoted minimizers or
 #              DNA minimizers) or minimap2 indexes
 
@@ -211,6 +228,37 @@ rule build_minimap2_index_exp5:
         cp {input[0]} $curr_ref_file 
         minimap2 -x map-ont -d {output} {input} &> $log_file
         """
+
+# Section 2.5: Extract a batch of data that will be processed by SPUMONI or minimap2.
+#              For SPUMONI, it will just be the current batch while for minimap2 it will
+#              a consistently longer prefix of the read.
+
+rule extract_batch_of_data_for_spumoni_exp5:
+    input:
+        "exp5_read_sets/pos_reads.fa",
+        "exp5_read_sets/null_reads.fa"
+    output:
+        "exp5_results/spumoni_{type}_k{k}_w{w}/{class}_reads/batch_{num}/curr_batch.fa"
+    shell:
+        """
+        python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
+        -n {wildcards.num} -s 180 --spumoni > {output}
+        """
+
+rule extract_batch_of_data_for_minimap2_exp5:
+    input:
+        "exp5_read_sets/pos_reads.fa",
+        "exp5_read_sets/null_reads.fa"
+    output:
+        "exp5_results/minimap2/{class}_reads/batch_{num}/curr_batch.fa"
+    shell:
+        """
+        python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
+        -n {wildcards.num} -s 180 --alignment > {output}
+        """
+
+
+
 
 
 

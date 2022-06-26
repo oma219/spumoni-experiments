@@ -63,6 +63,7 @@ def main(args):
         else:
             read_mappings[read.query_name] = [class_num]
         read_count += 1
+
     sam_file.close()
 
     # remove alignments that are ambiguous (multiple hits to different species)
@@ -98,24 +99,36 @@ def main(args):
     print(f"[log] percentages found for each class: {normalized_read_dist}")
 
     # print out reads for each class separately
-    sam_file = pysam.AlignmentFile(args.sam_file, "r")
+    # IMPORTANT: I grab these reads from the original fastq from SRA instead of the 
+    # SAM file since that was using the reads with the 720 bp prefix removed.
+
+    raw_read_file = open(args.raw_reads, "r")
+    raw_reads = [x.strip() for x in raw_read_file.readlines()]
+    assert len(raw_reads) % 4 == 0, "Assertion Error: the number of lines in fastq is not multiple of 4"
+
     pos_file = open(args.output_dir + "pos_reads.fa", "w")
     null_file = open(args.output_dir + "null_reads.fa", "w")
     
     num_pos_classes = len(args.pos_refs)
     reads_written = set()
+    
+    for i in range(0, len(raw_reads), 4):
+        read_name = raw_reads[i].split()[0][1:]
+        read_seq = raw_reads[i+1]
 
-    for read in sam_file.fetch():
-        if read.query_name in read_mappings and read.query_name not in reads_written:
-            class_num = find_class_of_reference_name(ref_list, read.reference_name)
-            if class_num <= num_pos_classes:
-                pos_file.write(f">{read.query_name}\n{read.query_sequence}\n")
+        if read_name in read_mappings and read_name not in reads_written:
+            # IMPORTANT: this list could have mulitple items, but all they are the same
+            class_num = read_mappings[read_name][0] 
+
+            if class_num <= num_pos_classes: # a read from pos classes
+                pos_file.write(f">{read_name}\n{read_seq}\n")
             else: # a read from null class
-                null_file.write(f">{read.query_name}\n{read.query_sequence}\n")
-            reads_written.add(read.query_name)
+                null_file.write(f">{read_name}\n{read_seq}\n")
+
+
     pos_file.close()
     null_file.close()
-    sam_file.close()
+    raw_read_file.close()
 
     print("\n[log] finished writing the reads to separate files for each class")
 
@@ -126,6 +139,7 @@ def parse_arguments():
     parser.add_argument("-p", dest="pos_refs", help="path to txt file with positive reference sequence names", required=True, nargs='*')
     parser.add_argument("-n", dest="null_refs", help="path to txt file with null reference sequence names", required=True, nargs='*')
     parser.add_argument("-o", dest="output_dir", help="path to output directory", required=True)
+    parser.add_argument("-r", dest="raw_reads", help="path to original Fastq file with raw reads (not reads with prefix excluded)")
     args = parser.parse_args()
     return args
 
@@ -139,6 +153,9 @@ def check_arguments(args):
         exit(1)
     elif args.output_dir[-1] != "/":
         args.output_dir += "/"
+    if not os.path.isfile(args.raw_reads):
+        print("Error: the raw read file is not valid.")
+        exit(1)
     
 if __name__ == "__main__":
     args = parse_arguments()
