@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Name: process_spumoni_report.py
-# Description: Process minimap2 SAM file and print out the reads that have
+# Description: Process minimap2 SAM file and print out the reads that have not been
 #              found in the database. Since MAPQ is not usuable with a pan-genome,
 #              we will commit an alignment if all of its alignments are to 
 #              same species.
@@ -62,18 +62,18 @@ def main(args):
 
     # Determine which reads only have alignments to a single class ...
     output_fd = open(args.output_file, "w")
-    committed_count = 0
+    uncommitted_count = 0
     for key in read_mappings:
-        if -1 not in read_mappings[key] and len(set(read_mappings[key])) == 1:
-            committed_count += 1
+        if -1 in read_mappings[key] or len(set(read_mappings[key])) > 1:
+            uncommitted_count += 1
             output_fd.write(f"{key}\n")
 
     output_fd.close()
-    print(f"[log] found {committed_count} reads in the database, and wrote names to output file.")
+    print(f"[log] {uncommitted_count} reads have not been found yet, and wrote names to output file.")
 
 def parse_arguments():
     """ Parse the command-line arguments """
-    parser = argparse.ArgumentParser(description="Take in a SAM file from minimap2, and determine which reads have been found in the database.")
+    parser = argparse.ArgumentParser(description="Take in a SAM file from minimap2, and determine which reads have not been found in the database.")
     parser.add_argument("-s", dest="sam_file", help="path to minimap2 SAM file", required=True)
     parser.add_argument("-r", dest="ref_names", help="path to reference name lists", required=True, nargs='*')
     parser.add_argument("-o", dest="output_file", help="path to output file", required=True)

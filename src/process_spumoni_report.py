@@ -2,7 +2,7 @@
 
 # Name: process_spumoni_report.py
 # Description: Process spumoni *.report file and print out the reads
-#              that have been successfully classified as FOUND.
+#              that have not been found in the database.
 # Date: June 26th, 2022
 
 import os
@@ -34,16 +34,16 @@ def main(args):
                 if line_split[0] in read_stats:
                     read_stats[line_split[0]].append(int(line_split[3]))
     
-    # Go through each read in last batch, and list the read names that are found
+    # Go through each read in last batch, and list the read names that are not found
     with open(args.output_file, "w") as out_fd:
         for key in read_stats:
             num_above_threshold = sum(read_stats[key])
-            if num_above_threshold/(len(read_stats[key]) + 0.0) >= 0.50:
+            if num_above_threshold == 0: #/(len(read_stats[key]) + 0.0) >= 0.50:
                 out_fd.write(f"{key}\n")
     
 def parse_arguments():
     """ Parse the command-line arguments """
-    parser = argparse.ArgumentParser(description="Take in a spumoni *.report and print out the reads that have been found.")
+    parser = argparse.ArgumentParser(description="Take in a spumoni *.report and print out the reads that have not been found.")
     parser.add_argument("-i", dest="all_batches", help="path to spumoni report file(s)", required=True, nargs='*')
     parser.add_argument("-l", dest="last_batch", help="path to last batch report (tells which reads we should focus on)", required=True, type=str)
     parser.add_argument("-o", dest="output_file", help="path to output file", required=True)
