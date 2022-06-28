@@ -21,7 +21,7 @@ def get_genomes_in_dataset_exp3(wildcards):
     for data_file in os.listdir(f"data/dataset_1"):
         if data_file.endswith(".fna"):
             file_list.append(f"{base_dir}/data/dataset_1/" + data_file)
-    return file_list[:10]
+    return file_list
 
 
 def get_null_genomes_exp3(wildcards):
