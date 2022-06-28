@@ -257,7 +257,7 @@ rule extract_first_batch_of_data_for_spumoni_exp5:
     shell:
         """
         python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
-        -n 1 -s 180 --spumoni > {output}
+        -n 1 -s 180 -a --spumoni > {output}
         """
 
 rule extract_first_batch_of_data_for_minimap2_exp5:
@@ -269,7 +269,7 @@ rule extract_first_batch_of_data_for_minimap2_exp5:
     shell:
         """
         python3 {repo_dir}/src/extract_batch.py -i exp5_read_sets/{wildcards.class}_reads.fa \
-        -n 1 -s 180 --alignment > {output}
+        -n 1 -s 180 -a --alignment > {output}
         """
 
 # Section 2.6: Classify the first batch of data using SPUMONI and minimap2

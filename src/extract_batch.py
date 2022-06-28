@@ -30,7 +30,7 @@ def main(args):
         read_batches = [read_seq[i:i+args.batch_size] for i in range(0, len(read_seq), args.batch_size)]
 
         # Output depends on the method
-        if read_name in keep_reads:
+        if read_name in keep_reads or args.keep_all:
             if args.spumoni_method:
                 print(f">{read_name}\n{read_batches[args.batch_num-1]}")
             elif args.alignment_method:
@@ -47,6 +47,7 @@ def parse_arguments():
     parser.add_argument("-n", dest="batch_num", help="batch number from the ONT sequencer", required=True, default=0, type=int)
     parser.add_argument("-s", dest="batch_size", help="size of the batch of data in bp", required=True, default=180, type=int)
     parser.add_argument("-k", dest="reads_to_keep", help="reads to keep when printing", default="")
+    parser.add_argument("-a", dest="keep_all", action="store_true", help="keep all the reads (default: false)", default=False)
     parser.add_argument("--spumoni", dest="spumoni_method", action="store_true", help="using spumoni to classify the batch", default=False)
     parser.add_argument("--alignment", dest="alignment_method", action="store_true", help="using alignment to classify the batch", default=False)
     args = parser.parse_args()
