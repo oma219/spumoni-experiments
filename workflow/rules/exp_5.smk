@@ -241,7 +241,7 @@ rule build_minimap2_index_exp5:
         curr_ref_file="exp5_indexes/minimap2_index/full_ref.fa"
         log_file="exp5_indexes/minimap2_index/full_ref.fa.log"
         cp {input[0]} $curr_ref_file 
-        minimap2 -x map-ont -d {output} {input} &> $log_file
+        minimap2 -x map-ont -d {output} --split-prefix="exp5_indexes/minimap2_index/split_" {input} &> $log_file
         """
 
 # Section 2.5: Extract a batch of data that will be processed by SPUMONI or minimap2.
@@ -307,7 +307,7 @@ rule classify_first_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
         """
 
 # Section 2.7: Parse out the reference names in each class, and store them to be used when
@@ -414,7 +414,7 @@ rule classify_second_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_2/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
         """
 
 # Section 2.11: Determine which reads each method did not find yet in order to 
@@ -506,7 +506,7 @@ rule classify_third_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_3/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
         """
 
 # Section 2.14: Determine which reads each method did not find yet in order to 
@@ -598,7 +598,7 @@ rule classify_fourth_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_4/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
         """
 
 # Section 2.17: Determine which reads each method did not find yet in order to 
