@@ -797,7 +797,7 @@ rule analyze_minimap2_results_into_csv_line_exp5:
 
 rule collect_all_analysis_files_exp5:
     input:
-        expand("exp5_results/spumoni_{type}_k4_w{w}/analysis.csv", type=['promoted','dna'], w=['11']),
+        expand("exp5_results/spumoni_{type}_k4_w{w}/analysis.csv", type=['promoted','dna'], w=[10, 11]),
         "exp5_results/minimap2/analysis.csv"
     output:
         "exp5_final_output/exp5_analysis.csv"
