@@ -35,6 +35,10 @@ long_read_acc_exp4 = config["LONG_READ_ACC_EXP4"]
 window_sizes_exp4 = [w for w in range(7, 24)]
 bin_sizes_exp4 = [50, 75, 150, 250, 350]
 
+window_sizes_exp6 = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
+num_reads_exp6 = config["NUM_READS_EXP6"]
+illumina_mismatch_prob_exp6 = config["ILLUMINA_MISMATCH_PROB_EXP6"]
+
 ###############################################################################
 # IMPORTANT: Sets the working directory based on configuration parameter, and 
 #            it can be set on command-line using --config DATA_ROOT=""
@@ -50,6 +54,7 @@ include: "rules/exp_2.smk"
 include: "rules/exp_3.smk"
 include: "rules/exp_4.smk"
 include: "rules/exp_5.smk"
+include: "rules/exp_6.smk"
 
 
 # Rule for experiment 4 ...

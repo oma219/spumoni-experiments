@@ -1,4 +1,4 @@
-DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp_5"
+DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp_6"
 NUM_DATASETS: 7
 REPO_DIR: "/home/oahmed6/spumoni_exps"
 SPUMONI_DIR: "/home/oahmed6/spumoni/build"
@@ -13,3 +13,5 @@ LONG_READ_ACC_EXP3: 0.95
 NUM_READS_EXP4: 10000
 ILLUMINA_MISMATCH_PROB_EXP4: 0.01
 LONG_READ_ACC_EXP4: 0.95
+NUM_READS_EXP6: 1000000
+ILLUMINA_MISMATCH_PROB_EXP6: 0.01

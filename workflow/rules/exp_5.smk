@@ -202,7 +202,9 @@ rule build_spumoni_promoted_index_exp5:
     input:
         "exp5_full_ref/full_ref.fa"
     output:
-        "exp5_indexes/spumoni_promoted_k{k}_w{w}/spumoni_full_ref.bin"
+        "exp5_indexes/spumoni_promoted_k{k}_w{w}/spumoni_full_ref.bin",
+        "exp5_indexes/spumoni_promoted_k{k}_w{w}/spumoni_full_ref.bin.thrbv.spumoni",
+        "exp5_indexes/spumoni_promoted_k{k}_w{w}/spumoni_full_ref.bin.pmlnulldb"
     shell:
         """
         # Copy over reference file to specific folder, and build the index
@@ -216,7 +218,9 @@ rule build_spumoni_dna_index_exp5:
     input:
         "exp5_full_ref/full_ref.fa"
     output:
-        "exp5_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa"
+        "exp5_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa",
+        "exp5_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa.thrbv.spumoni",
+        "exp5_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa.pmlnulldb"
     shell:
         """
         # Copy over reference file to specific folder, and build the index
