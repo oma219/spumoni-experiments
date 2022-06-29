@@ -138,4 +138,4 @@ final_plot <- ggarrange(exp2_index_plot, exp6_speedup_plot, ncol = 2, nrow = 1, 
 print(final_plot)
 
 output_name <- paste(working_dir, "exp6_combined_plot.pdf", sep="")
-ggsave(output_name, plot=final_plot, dpi=800, device="pdf", width=8, height=5)
+ggsave(output_name, plot=final_plot, dpi=800, device="pdf", width=8, height=4)
