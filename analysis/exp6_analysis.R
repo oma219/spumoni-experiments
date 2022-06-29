@@ -134,8 +134,8 @@ exp2_index_plot <- make_pml_index_plot(exp2_full_df)
 print(exp2_index_plot)
 
 ### Combine the two plots from above
-final_plot <- ggarrange(exp2_index_plot, exp6_speedup_plot, ncol = 2, nrow = 1)
+final_plot <- ggarrange(exp2_index_plot, exp6_speedup_plot, ncol = 2, nrow = 1, labels=c("a","b") )
 print(final_plot)
 
 output_name <- paste(working_dir, "exp6_combined_plot.pdf", sep="")
-ggsave(output_name, plot=final_plot, dpi=800, device="pdf", width=8, height=4)
+ggsave(output_name, plot=final_plot, dpi=800, device="pdf", width=8, height=5)
