@@ -96,14 +96,15 @@ make_accuracy_index_size_plot <- function(total_dataset_df) {
   # create the plot
   plot <- ggplot(subset_df, aes(x=pmlindexsize, y=accuracy)) + 
           geom_line(aes(color=readlength, group=interaction(indextype, readlength)))+
-          geom_point(aes(color=readlength, shape=indextype)) +
+          geom_point(aes(color=readlength, shape=indextype),size=2) +
           theme_bw() +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
-                legend.position = "bottom", 
+                legend.position = c(0.7,0.2), 
+                legend.background = element_rect(linetype="solid", color="black"),
                 legend.text=element_text(size=12),
-                legend.box="vertical",
+                legend.box="horizontal",
                 legend.title=element_text(size=12),
                 axis.text=element_text(size=12, color="black")) +
           scale_x_continuous(breaks=seq(11000000, 60000000, 10000000)) +
@@ -113,8 +114,7 @@ make_accuracy_index_size_plot <- function(total_dataset_df) {
           #geom_hline(yintercept=long_read_acc, linetype="dashed", color="#F8766D", size=0.75) +
           #geom_hline(yintercept=short_read_acc, linetype="dashed", color="#00BFC4", size=0.75) +
           labs(x="Index Size (bytes)",
-               y="Accuracy",
-               title="Binary read classification for different minimizer schemes and index sizes") 
+               y="Accuracy") 
   return(plot)
 }
 
@@ -152,7 +152,7 @@ acc_index_plot <- make_accuracy_index_size_plot(total_dataset_df)
 acc_index_plot
 
 output_name <- paste(working_dir, "exp3_accuracy_index_size.pdf", sep="")
-ggsave(output_name, plot=acc_index_plot, dpi=1200, device="pdf", width=8, height=6)
+ggsave(output_name, plot=acc_index_plot, dpi=800, device="pdf", width=7, height=5)
 
 output_name <- paste(working_dir, "exp3_accuracy_index_size.jpeg", sep="")
 ggsave(output_name, plot=acc_index_plot, dpi=800, device="jpeg", width=8, height=6)
