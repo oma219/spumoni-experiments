@@ -130,7 +130,6 @@ rule simulate_long_positive_reads_exp3:
         set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
         pbsim --depth 20.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $positive_genome
-        echo "step_2"
 
         cat exp3_reads/long/positive/positive_reads_*.fastq > exp3_reads/long/positive/positive_reads.fastq
         rm exp3_reads/long/positive/positive_reads_*.fastq
