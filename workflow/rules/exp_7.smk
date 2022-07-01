@@ -94,5 +94,35 @@ rule build_spumoni_promoted_index_exp7:
         spumoni build -r $curr_ref_file -M -P -m -K {wildcards.k} -W {wildcards.w} &> $log_file
         """
 
+rule build_spumoni_dna_index_exp7:
+    input:
+        "exp7_full_ref/human_database.fa"
+    output:
+        "exp7_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa",
+        "exp7_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa.thrbv.spumoni",
+        "exp7_indexes/spumoni_dna_k{k}_w{w}/spumoni_full_ref.fa.pmlnulldb"
+    shell:
+        """
+        # Copy over reference file to specific folder, and build the index
+        curr_ref_file="exp7_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa"
+        log_file="exp7_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa.log"
+        cp {input[0]} $curr_ref_file
+        spumoni build -r $curr_ref_file -M -P -t -K {wildcards.k} -W {wildcards.w} &> $log_file
+        """
+
+rule build_minimap2_index_exp7:
+    input:
+        "exp7_full_ref/human_database.fa"
+    output:
+        "exp7_indexes/minimap2_index/full_ref.mmi"
+    shell:
+        """
+        # Copy over reference file to specific folder, and build the index
+        curr_ref_file="exp7_indexes/minimap2_index/full_ref.fa"
+        log_file="exp7_indexes/minimap2_index/full_ref.fa.log"
+        cp {input[0]} $curr_ref_file 
+        minimap2 -x map-ont -d {output} --split-prefix="exp7_indexes/minimap2_index/split_" {input} &> $log_file
+        """
+
 
 
