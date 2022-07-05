@@ -9,6 +9,7 @@
 # Date: June 25th, 2022
 
 import os
+import sys
 import argparse
 
 def main(args):
@@ -27,6 +28,8 @@ def main(args):
     for i in range(0, len(all_reads), 2):
         read_name = all_reads[i].split()[0][1:]
         read_seq = all_reads[i+1]
+
+        assert len(read_seq) >= 720, "assertion error: sequence is too short."
         read_batches = [read_seq[i:i+args.batch_size] for i in range(0, len(read_seq), args.batch_size)]
 
         # Output depends on the method

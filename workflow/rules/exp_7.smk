@@ -33,12 +33,14 @@ rule subsample_microbiome_reads_exp7:
         "data/microbiome_reads/SRR9847854_5000bp.fastq"
     output:
         "exp7_intermediate/step_1/null_reads.fa",
+        "exp7_intermediate/step_1/null_reads_2000bp.fa",
         "exp7_read_sets/null_reads.fa"
     shell:
         """
         seqtk seq -A {input} > {output[0]}
+        seqtk seq -L 2000 {output[0]} > {output[1]}
         num_lines=$(({num_pos_reads_exp7}*2))
-        head -n $num_lines {output[0]} > {output[1]}
+        head -n $num_lines {output[1]} > {output[2]}
         """
 
 rule simulate_long_human_reads_exp7:
@@ -50,7 +52,7 @@ rule simulate_long_human_reads_exp7:
         "exp7_read_sets/pos_reads.fa"
     shell:
         """
-        pbsim --depth 2.0 --prefix exp7_intermediate/step_2/pos_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp7} {input}
+        pbsim --depth 2.0 --prefix exp7_intermediate/step_2/pos_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp7} --length-min 2000 {input}
 
         # remove reads simulated from chrM
         rm exp7_intermediate/step_2/pos_reads_0024.fastq
