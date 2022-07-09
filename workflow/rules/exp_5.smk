@@ -307,7 +307,7 @@ rule classify_first_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_1/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} -o {output[0]}
         """
 
 # Section 2.7: Parse out the reference names in each class, and store them to be used when
@@ -414,7 +414,7 @@ rule classify_second_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_2/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} -o {output[0]}
         """
 
 # Section 2.11: Determine which reads each method did not find yet in order to 
@@ -506,7 +506,7 @@ rule classify_third_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_3/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} -o {output[0]}
         """
 
 # Section 2.14: Determine which reads each method did not find yet in order to 
@@ -598,7 +598,7 @@ rule classify_fourth_batch_using_minimap2_exp5:
         "exp5_results/minimap2/{class}_reads/batch_4/curr_batch.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} > {output[0]}
+        {time_prog} {time_format} --output={output[1]} minimap2 -t 0 -a {input[0]} --split-prefix="exp5_indexes/minimap2_index/split_" {input[1]} -o {output[0]}
         """
 
 # Section 2.17: Determine which reads each method did not find yet in order to 
@@ -658,6 +658,8 @@ rule analyze_spumoni_promoted_results_into_csv_line_exp5:
         FP=$(($num_null_reads-$TN))
 
         accuracy=$(echo "scale=4; ($TP+$TN)/($TP+$FN+$FP+$TN)" | bc)
+        sensitivity=$(echo "scale=4; ($TP)/($TP+$FN)" | bc)
+        specificity=$(echo "scale=4; ($TN)/($FP+$TN)" | bc)
 
         # Compute time used in each stage
         time_1=$(cat {input[4]} | awk '{{print $6}}')
@@ -680,8 +682,8 @@ rule analyze_spumoni_promoted_results_into_csv_line_exp5:
         total_index_size=$(($component_1+$component_2))
 
         # Print to output file
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
-        echo "spumoni_promoted_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$total_time,$peak_mem,$total_index_size" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
+        echo "spumoni_promoted_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
         """
 
 rule analyze_spumoni_dna_results_into_csv_line_exp5:
@@ -714,6 +716,8 @@ rule analyze_spumoni_dna_results_into_csv_line_exp5:
         FP=$(($num_null_reads-$TN))
 
         accuracy=$(echo "scale=4; ($TP+$TN)/($TP+$FN+$FP+$TN)" | bc)
+        sensitivity=$(echo "scale=4; ($TP)/($TP+$FN)" | bc)
+        specificity=$(echo "scale=4; ($TN)/($FP+$TN)" | bc)
 
         # Compute time used in each stage
         time_1=$(cat {input[4]} | awk '{{print $6}}')
@@ -736,8 +740,8 @@ rule analyze_spumoni_dna_results_into_csv_line_exp5:
         total_index_size=$(($component_1+$component_2))
 
         # Print to output file
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
-        echo "spumoni_dna_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$total_time,$peak_mem,$total_index_size" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
+        echo "spumoni_dna_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
         """
 
 rule analyze_minimap2_results_into_csv_line_exp5:
@@ -769,6 +773,8 @@ rule analyze_minimap2_results_into_csv_line_exp5:
         FP=$(($num_null_reads-$TN))
 
         accuracy=$(echo "scale=4; ($TP+$TN)/($TP+$FN+$FP+$TN)" | bc)
+        sensitivity=$(echo "scale=4; ($TP)/($TP+$FN)" | bc)
+        specificity=$(echo "scale=4; ($TN)/($FP+$TN)" | bc)
 
         # Compute time used in each stage
         time_1=$(cat {input[4]} | awk '{{print $6}}')
@@ -789,8 +795,8 @@ rule analyze_minimap2_results_into_csv_line_exp5:
         total_index_size=$(ls -l {input[12]} | awk '{{print $5}}')
 
         # Print to output file
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
-        echo "minimap2,$TP,$FN,$FP,$TN,$accuracy,$total_time,$peak_mem,$total_index_size" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
+        echo "minimap2,$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
         """
 
 # Section 2.19: Collect all the individual analysis files into one csv
@@ -803,7 +809,7 @@ rule collect_all_analysis_files_exp5:
         "exp5_final_output/exp5_analysis.csv"
     shell:
         """
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
         for file in {input}; do
             tail -n1 $file >> {output}
         done
