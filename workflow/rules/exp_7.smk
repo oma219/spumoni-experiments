@@ -540,6 +540,8 @@ rule analyze_spumoni_promoted_results_into_csv_line_exp7:
         FP=$(($num_null_reads-$TN))
 
         accuracy=$(echo "scale=4; ($TP+$TN)/($TP+$FN+$FP+$TN)" | bc)
+        sensitivity=$(echo "scale=4; ($TP)/($TP+$FN)" | bc)
+        specificity=$(echo "scale=4; ($TN)/($FP+$TN)" | bc)
 
         # Compute time used in each stage
         time_1=$(cat {input[4]} | awk '{{print $6}}')
@@ -562,8 +564,8 @@ rule analyze_spumoni_promoted_results_into_csv_line_exp7:
         total_index_size=$(($component_1+$component_2))
 
         # Print to output file
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
-        echo "spumoni_promoted_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$total_time,$peak_mem,$total_index_size" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
+        echo "spumoni_promoted_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
         """
 
 rule analyze_spumoni_dna_results_into_csv_line_exp7:
@@ -596,6 +598,8 @@ rule analyze_spumoni_dna_results_into_csv_line_exp7:
         FP=$(($num_null_reads-$TN))
 
         accuracy=$(echo "scale=4; ($TP+$TN)/($TP+$FN+$FP+$TN)" | bc)
+        sensitivity=$(echo "scale=4; ($TP)/($TP+$FN)" | bc)
+        specificity=$(echo "scale=4; ($TN)/($FP+$TN)" | bc)
 
         # Compute time used in each stage
         time_1=$(cat {input[4]} | awk '{{print $6}}')
@@ -618,8 +622,8 @@ rule analyze_spumoni_dna_results_into_csv_line_exp7:
         total_index_size=$(($component_1+$component_2))
 
         # Print to output file
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
-        echo "spumoni_dna_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$total_time,$peak_mem,$total_index_size" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
+        echo "spumoni_dna_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
         """
 
 rule analyze_minimap2_results_into_csv_line_exp7:
@@ -651,6 +655,8 @@ rule analyze_minimap2_results_into_csv_line_exp7:
         FP=$(($num_null_reads-$TN))
 
         accuracy=$(echo "scale=4; ($TP+$TN)/($TP+$FN+$FP+$TN)" | bc)
+        sensitivity=$(echo "scale=4; ($TP)/($TP+$FN)" | bc)
+        specificity=$(echo "scale=4; ($TN)/($FP+$TN)" | bc)
 
         # Compute time used in each stage
         time_1=$(cat {input[4]} | awk '{{print $6}}')
@@ -671,8 +677,8 @@ rule analyze_minimap2_results_into_csv_line_exp7:
         total_index_size=$(ls -l {input[12]} | awk '{{print $5}}')
 
         # Print to output file
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
-        echo "minimap2,$TP,$FN,$FP,$TN,$accuracy,$total_time,$peak_mem,$total_index_size" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
+        echo "minimap2,$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
         """
 
 # Section 2.17: Collect all the individual analysis files into one csv
@@ -685,7 +691,7 @@ rule collect_all_analysis_files_exp7:
         "exp7_final_output/exp7_analysis.csv"
     shell:
         """
-        echo "approach,TP,FN,FP,TN,accuracy,totaltime,peakmem,indexsize" >> {output}
+        echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
         for file in {input}; do
             tail -n1 $file >> {output}
         done
