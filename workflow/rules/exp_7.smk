@@ -40,7 +40,8 @@ rule subsample_microbiome_reads_exp7:
         seqtk seq -A {input} > {output[0]}
         seqtk seq -L 2000 {output[0]} > {output[1]}
         num_lines=$(({num_pos_reads_exp7}*2))
-        head -n $num_lines {output[1]} > {output[2]}
+        head -n $num_lines {output[1]} > {output[2]}.before_filter
+        python3 {repo_dir}/src/remove_bad_reads.py -i {output[2]}.before_filter > {output[2]}
         """
 
 rule simulate_long_human_reads_exp7:
@@ -65,7 +66,8 @@ rule simulate_long_human_reads_exp7:
         seqtk seq -a {output[0]} > {output[1]}
 
         num_lines=$(({num_null_reads_exp7} * 2))
-        head -n $num_lines {output[1]} > {output[2]}
+        head -n $num_lines {output[1]} > {output[2]}.before_filter
+        python3 {repo_dir}/src/remove_bad_reads.py -i {output[2]}.before_filter > {output[2]}
         """
 
 # Section 2.2: Build the complete reference, and then build the indexes needed for classification
