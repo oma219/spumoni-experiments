@@ -116,8 +116,9 @@ rule simulate_short_positive_reads_exp3:
         """
         set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        mason_simulator -ir $positive_genome -n {num_reads_exp3} -v -o {output[0]} --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
-        #rm "$positive_genome.fai"
+        mason_simulator -ir $positive_genome -n {num_reads_exp3} -v -o {output[0]}.before_filter.fa --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
+        python3 {repo_dir}/src/remove_bad_reads.py -i {output[0]}.before_filter.fa > {output[0]}
+        rm {output[0]}.before_filter.fa
         """
 
 rule simulate_long_positive_reads_exp3:
@@ -129,7 +130,7 @@ rule simulate_long_positive_reads_exp3:
         """
         set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        pbsim --depth 20.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $positive_genome
+        pbsim --depth 50.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $positive_genome
 
         cat exp3_reads/long/positive/positive_reads_*.fastq > exp3_reads/long/positive/positive_reads.fastq
         rm exp3_reads/long/positive/positive_reads_*.fastq
@@ -138,10 +139,17 @@ rule simulate_long_positive_reads_exp3:
 
         seqtk seq -a exp3_reads/long/positive/positive_reads.fastq > {output[0]}.full
         rm exp3_reads/long/positive/positive_reads.fastq
-
         num_lines=$(({num_reads_exp3} * 2))
-        head -n $num_lines {output[0]}.full > {output[0]}
-        rm {output[0]}.full
+
+        total_lines=$(wc -l {output[0]}.full | awk '{{print $1}}')
+        if [ $total_lines -lt $num_lines ]; then
+            echo "Error: not enough coverage to reach the reads needed.";
+            exit;
+        fi
+
+        head -n $num_lines {output[0]}.full > {output[0]}.before_filter
+        python3 {repo_dir}/src/remove_bad_reads.py -i {output[0]}.before_filter > {output[0]}
+        rm {output[0]}.full {output[0]}.before_filter
         """
 
 # Section 2.3: Copy over the provided null genome, and simulate short and long reads from it.
@@ -154,8 +162,9 @@ rule simulate_short_null_reads_exp3:
     shell:
         """
         null_genome={input}
-        mason_simulator -ir $null_genome -n {num_reads_exp3} -v -o {output[0]} --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
-        rm "$null_genome.fai"
+        mason_simulator -ir $null_genome -n {num_reads_exp3} -v -o {output[0]}.before_filter.fa --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
+        python3 {repo_dir}/src/remove_bad_reads.py -i {output[0]}.before_filter.fa > {output[0]}
+        rm {output[0]}.before_filter.fa
         """
 
 rule simulate_long_null_reads_exp3:
@@ -175,10 +184,17 @@ rule simulate_long_null_reads_exp3:
 
         seqtk seq -a exp3_reads/long/null/null_reads.fastq > {output[0]}.full
         rm exp3_reads/long/null/null_reads.fastq
-
         num_lines=$(({num_reads_exp3} * 2))
-        head -n $num_lines {output[0]}.full > {output[0]}
-        rm {output[0]}.full
+
+        total_lines=$(wc -l {output[0]}.full | awk '{{print $1}}')
+        if [ $total_lines -lt $num_lines ]; then
+            echo "Error: not enough coverage to reach the reads needed.";
+            exit;
+        fi
+
+        head -n $num_lines {output[0]}.full > {output[0]}.before_filter
+        python3 {repo_dir}/src/remove_bad_reads.py -i {output[0]}.before_filter > {output[0]}
+        rm {output[0]}.full {output[0]}.before_filter
         """
     
 # Section 2.4: Let SPUMONI classify both short and long reads using promotion-minimizer index
