@@ -14,15 +14,12 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-exp2_data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2a/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2b/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2c/exp2_index_stats.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2d/exp2_index_stats.csv")
+exp2_data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_3/exp2_index_stats.csv")
 
-exp6_data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_6/trial_one/exp6_full_index_results.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_6/trial_one/exp6_total_results.csv")
+exp6_data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_6/trial_2/exp6_full_index_results.csv",
+                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_6/trial_2/exp6_total_results.csv")
 
-working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_6/trial_one/plots/"
+working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_6/trial_2/plots/"
 
 ########################################################################
 # Helper methods for generating plots
@@ -102,10 +99,7 @@ for (input_file in exp2_data_paths) {
 exp2_full_df <- do.call(rbind, datalist)
 
 # Load in the statistics for full-sized indexes
-full_stat_files <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2a/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2b/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2c/exp2_full_index_stats.csv",
-                     "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_2/exp_2d/exp2_full_index_stats.csv")
+full_stat_files <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_2/trial_3/exp2_full_index_stats.csv")
 
 # Divide all the values by the full-index version
 for (stat_file in full_stat_files) {
@@ -139,3 +133,6 @@ print(final_plot)
 
 output_name <- paste(working_dir, "exp6_combined_plot.pdf", sep="")
 ggsave(output_name, plot=final_plot, dpi=800, device="pdf", width=8, height=4)
+
+output_name <- paste(working_dir, "exp6_combined_plot.jpeg", sep="")
+ggsave(output_name, plot=final_plot, dpi=800, device="jpeg", width=8, height=4)
