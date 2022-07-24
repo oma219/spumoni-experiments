@@ -8,6 +8,7 @@
 import os
 import sys
 import argparse
+import random
 
 def main(args):
     """ process the lengths file and generate report and csvs """
@@ -24,8 +25,12 @@ def main(args):
                 avg = sum(lengths)/len(lengths)
                 #max_val = max(lengths)
                 avg_dict[curr_seq] = avg
+            
+            if i == 100:
+                break
+    print("[log] finished finding avg length for each contig")
 
-    # sort them, and keep all the contigs with   
+    # sort them, and keep all the contigs with avg length greater than 20
     sorted_dict = dict(sorted(avg_dict.items(), key=lambda item: item[1]))
     top_contigs = []
     for key in list(sorted_dict)[::-1]:
@@ -38,7 +43,8 @@ def main(args):
         out_fd.write("{:30}{:20}\n".format("name:", "max length:"))
         for name in list(sorted_dict)[::-1]:
             out_fd.write("{:30}{:<20}\n".format(name, sorted_dict[name]))
-    
+    print("[log] wrote out report with all average lengths")
+
     # write out a csv-file for each of the top-ten contigs
     with open(args.lengths_file, "r") as input_fd:
         curr_seq = ""
@@ -58,15 +64,33 @@ def main(args):
                     lengths = [int(x) for x in line.split()]
                     for i in range(0, len(lengths), 10000):
                         total_sampled.append(lengths[i])
-    
+    print("[log] wrote out the top-contigs to csv (those with avg>=20)")
 
     # write out a csv-file for the "regular" contigs
     with open(args.output_dir + "regular_contigs.csv", "w") as out_fd:
         for length in total_sampled:
             out_fd.write(f"regular,{length}\n")
+    print("[log] finished writing sub-sampled csv file for regular contigs")
 
+    # choose a four random contig that were not suspicious and write out to csv file
+    random_normal_contigs = random.sample(list(sorted_dict)[:-len(top_contigs)], k=4)
 
-
+    # write out a csv-file for each of the top-ten contigs
+    with open(args.lengths_file, "r") as input_fd:
+        curr_seq = ""
+        for i, line in enumerate(input_fd):
+            if i % 2 == 0:
+                curr_seq = line.strip()
+            else:
+                if curr_seq in random_normal_contigs:
+                    lengths = [int(x) for x in line.split()]
+                    index = random_normal_contigs.index(curr_seq)
+                    
+                    with open(args.output_dir + f"regular_contig_{index}_lengths.csv", "w") as out_fd:
+                        for i, l in enumerate(lengths):
+                            out_fd.write(f"{curr_seq[1:]},{i},{l}\n")
+    print("[log] finished writing csv file for regular contigs")
+    
 def parse_arguments():
     """ Parse the command-line arguments """
     parser = argparse.ArgumentParser(description="Take in a lengths file from exp8, and process it.")
