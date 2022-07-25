@@ -14,8 +14,8 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Data paths
 ########################################################################
-data_working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_1/data/assembly_2/"
-output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_1/plots/assembly_2/"
+data_working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_1/data/assembly_1/"
+output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_1/plots/assembly_1/"
 
 ########################################################################
 # Helper methods for generating plots
@@ -27,8 +27,8 @@ make_length_plot <- function(contig_name, input_df, line_color) {
           geom_line(aes(x=pos, y=length), color=line_color, size=0.5) +
           theme_classic() +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
-                axis.title.x=element_text(size =14),
-                axis.title.y=element_text(size=14),
+                axis.title.x=element_text(size =12),
+                axis.title.y=element_text(size=12),
                 legend.text=element_text(size=12),
                 legend.box="horizontal",
                 legend.title=element_text(size=12),
@@ -64,20 +64,20 @@ make_comparison_plot <- function(input_df) {
           geom_boxplot(outlier.shape=4) +
           theme_classic() +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
-                axis.title.x=element_text(size =14),
-                axis.title.y=element_text(size=14),
+                axis.title.x=element_text(size =12),
+                axis.title.y=element_text(size=12),
                 legend.text=element_text(size=12),
                 axis.text.x = element_text(angle = 20, vjust=0.5),
                 legend.box="horizontal",
                 legend.title=element_text(size=12),
-                legend.position="bottom",
+                legend.position=c(0.9, 0.9),
                 axis.text=element_text(size=10, color="black")) +
         #scale_x_continuous(breaks=seq(0, 32, 2)) +
-        scale_y_continuous(breaks=seq(0, 600, 100)) +
+        #scale_y_continuous(breaks=seq(0, 600, 100)) +
         #scale_linetype_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
         scale_fill_discrete(name="", labels=c("Normal", "Suspicious")) +
         #scale_shape_discrete(name="Dataset", labels=c("Ecoli_250", "Ecoli_500", "Salmonella_250", "Salmonella_500")) +
-        labs(y="Matching Statistic Lengths", x="Contigs") 
+        labs(y="Matching Statistic Length", x="Contigs") 
   return(plot)
 }
 
@@ -121,8 +121,8 @@ plot_2
 # Combine the two plots into one ...
 combined_plot <- ggdraw() +
                  draw_plot(plot_1) +
-                 draw_plot(plot_2, x = 0.7, y = .65, width = .15, height = .3)
-                #draw_plot(plot_2, x=0.12, y=0.5, width=0.2, height=0.4)
+                 #draw_plot(plot_2, x = 0.7, y = .65, width = .15, height = .3)
+                 draw_plot(plot_2, x=0.12, y=0.5, width=0.2, height=0.4)
 combined_plot
 
 
@@ -148,14 +148,14 @@ plot_4
 
 # Combine the plots
 total_plot <- ggarrange(combined_plot, 
-                        ggarrange(plot_3, plot_4, ncol=2, labels=c("b", "c")), 
-                        nrow=2, labels=c("a"))
+                        ggarrange(plot_3, plot_4, nrow=2, labels=c("b", "c")), 
+                        ncol=2, labels=c("a"))
 total_plot
 
 # Saving the plot: a vector and non-vector graphic
-output_name <- paste(output_dir, "exp8_plot_assembly_2.jpeg", sep="")
-ggsave(output_name, plot=total_plot, dpi=800, device="jpeg", width=12, height=9)
+output_name <- paste(output_dir, "exp8_plot_assembly_1.jpeg", sep="")
+ggsave(output_name, plot=total_plot, dpi=800, device="jpeg", width=12, height=6)
 
-output_name <- paste(output_dir, "exp8_plot_assembly_2.pdf", sep="")
-ggsave(output_name, plot=total_plot, dpi=800, device="pdf", width=12, height=9)
+output_name <- paste(output_dir, "exp8_plot_assembly_1.pdf", sep="")
+ggsave(output_name, plot=total_plot, dpi=800, device="pdf", width=12, height=6)
 
