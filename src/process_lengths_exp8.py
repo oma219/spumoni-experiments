@@ -25,9 +25,6 @@ def main(args):
                 avg = sum(lengths)/len(lengths)
                 #max_val = max(lengths)
                 avg_dict[curr_seq] = avg
-            
-            if i == 100:
-                break
     print("[log] finished finding avg length for each contig")
 
     # sort them, and keep all the contigs with avg length greater than 20
