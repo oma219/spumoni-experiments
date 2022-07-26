@@ -67,11 +67,11 @@ make_comparison_plot <- function(input_df) {
                 axis.title.x=element_text(size =12),
                 axis.title.y=element_text(size=12),
                 legend.text=element_text(size=12),
-                axis.text.x = element_text(angle = 20, vjust=0.5),
+                axis.text.x = element_text(angle = 0, vjust=0.5, size=8),
                 legend.box="horizontal",
                 legend.title=element_text(size=12),
-                legend.position=c(0.9, 0.9),
-                axis.text=element_text(size=10, color="black")) +
+                legend.position=c(0.8, 0.9),
+                axis.text.y =element_text(size=10, color="black")) +
         #scale_x_continuous(breaks=seq(0, 32, 2)) +
         #scale_y_continuous(breaks=seq(0, 600, 100)) +
         #scale_linetype_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
