@@ -20,6 +20,9 @@ pbsim_model = config["PBSIM_MODEL"]
 time_prog = config["TIME_PROG"]
 time_format = config["TIME_FORMAT"]
 
+num_datasets_exp1 = config["NUM_DATASETS_EXP1"]
+reads_per_dataset_exp1 = config["READS_PER_DATASET_EXP1"]
+
 large_window_sizes_exp2 = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 dataset_name_exp2 = config["DATASET_NAME_EXP2"]
 
