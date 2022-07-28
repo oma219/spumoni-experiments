@@ -41,8 +41,8 @@ make_speedup_plot <- function(input_df) {
                 axis.text=element_text(size=12, color="black")) +
           scale_x_continuous(breaks=seq(0, 32, 2)) +
           scale_y_continuous(breaks=seq(0, 5.0, 0.5)) +
-          scale_linetype_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
-          scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
+          scale_linetype_discrete(name="Alphabet", labels=c("DNA", "Minimizer")) +
+          scale_color_discrete(name="Alphabet", labels=c("DNA", "Minimizer")) +
           #scale_shape_discrete(name="Dataset", labels=c("Ecoli_250", "Ecoli_500", "Salmonella_250", "Salmonella_500")) +
           labs(x="Window size (w)",
                y="Speed-up") 
@@ -65,8 +65,8 @@ make_pml_index_plot <- function(input_df) {
                 axis.text=element_text(size=12, color="black")) +
           scale_x_continuous(breaks=seq(0, 32, 2)) +
           scale_y_continuous(breaks=seq(0, 1.5, 0.2), limits=c(0,NA)) +
-          scale_color_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
-          scale_linetype_discrete(name="Minimizer Type", labels=c("DNA", "Promoted")) +
+          scale_color_discrete(name="Alphabet", labels=c("DNA", "Minimizer")) +
+          scale_linetype_discrete(name="Alphabet", labels=c("DNA", "Minimizer")) +
           #scale_shape_discrete(name="Dataset", labels=c("Ecoli_250", "Ecoli_500", "Salmonella_250", "Salmonella_500")) +
           labs(x="Window size (w)",
                y="Relative Minimizer Index Size") 

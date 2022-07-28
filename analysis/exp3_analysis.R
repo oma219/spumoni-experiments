@@ -107,13 +107,13 @@ make_accuracy_index_size_plot <- function(total_dataset_df) {
                 legend.box="horizontal",
                 legend.title=element_text(size=12),
                 axis.text=element_text(size=12, color="black")) +
-          scale_x_continuous(breaks=seq(50000000, 250000000, 40000000)) +
-          scale_y_continuous(breaks=seq(0.85, 1.0, 0.025)) +
+          scale_x_continuous(breaks=seq(50, 250, 25)) +
+          scale_y_continuous(breaks=seq(0.80, 1.0, 0.025)) +
           scale_color_discrete(name="Read Length", labels=c("Long", "Short")) +
-          scale_shape_discrete(name="Minimizer Type", labels=c("DNA", "Promotion")) +
+          scale_shape_discrete(name="Alphabet", labels=c("DNA", "Minimizer")) +
           #geom_hline(yintercept=long_read_acc, linetype="dashed", color="#F8766D", size=0.75) +
           #geom_hline(yintercept=short_read_acc, linetype="dashed", color="#00BFC4", size=0.75) +
-          labs(x="Index Size (bytes)",
+          labs(x="Index Size (MB)",
                y="Accuracy") 
   return(plot)
 }
@@ -148,11 +148,12 @@ output_name <- paste(working_dir, "exp3_dna_min_accuracy.jpeg", sep="")
 ggsave(output_name, plot=dna_acc_plot, dpi=800, device="jpeg", width=8, height=6)
 
 # Plot #3
+total_dataset_df["pmlindexsize"] <- total_dataset_df["pmlindexsize"]/1048576
 acc_index_plot <- make_accuracy_index_size_plot(total_dataset_df)
 acc_index_plot
 
 output_name <- paste(working_dir, "exp3_accuracy_index_size.pdf", sep="")
-ggsave(output_name, plot=acc_index_plot, dpi=800, device="pdf", width=7, height=5)
+ggsave(output_name, plot=acc_index_plot, dpi=800, device="pdf", width=7, height=4)
 
 output_name <- paste(working_dir, "exp3_accuracy_index_size.jpeg", sep="")
-ggsave(output_name, plot=acc_index_plot, dpi=800, device="jpeg", width=8, height=6)
+ggsave(output_name, plot=acc_index_plot, dpi=800, device="jpeg", width=7, height=4)
