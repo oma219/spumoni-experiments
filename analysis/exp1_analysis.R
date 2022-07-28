@@ -12,14 +12,13 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/exp_1b/illumina_ms_doc_analysis.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/exp_1b/ont_ms_doc_analysis.csv")
-working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/exp_1b/"
+data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/trial_3/data/illumina_ms_doc_analysis.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/trial_3/data/ont_ms_doc_analysis.csv")
+output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/trial_3/plots/"
 
-dataset_names <- c("E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria",
-                    "E. faecalis", "Staphylococcus")
-x_labels <- c("Random Reads", "E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria",
-              "E. faecalis", "Staphylococcus")
+dataset_names <- c("E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria", "E. faecalis", "Staphylococcus")
+x_labels <- c("Random Reads", "E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria", "E. faecalis", "Staphylococcus")
+
 columns_to_extract <- c("class_1_percent", "class_2_percent", "class_3_percent",
                         "class_4_percent", "class_5_percent", "class_6_percent", "class_7_percent",
                         "class_8_percent")
@@ -55,8 +54,8 @@ make_group_bar_plot <- function(input_df, read_type) {
           scale_y_continuous(breaks=seq(0, 1.0, 0.1)) +
           scale_x_discrete(labels=x_labels) +
           labs(x="Simulated Read Set",
-               y="Average % of Document Labels Across Read",
-               title=graph_title) +
+               y="Average Ratio of Document Labels Across Read",
+               title="") +
           scale_fill_discrete(name="Species", labels=dataset_names)
     return (plot)
 }
@@ -74,10 +73,10 @@ for (input_file in data_paths) {
   curr_plot <- make_group_bar_plot(input_df, read_types[pos])
   
   # Save a vector graphic & regular graphic
-  output_name <- paste(working_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.pdf", sep="")
+  output_name <- paste(output_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.pdf", sep="")
   ggsave(output_name, plot=curr_plot, dpi=1200, device="pdf", width=10, height=6)
 
-  output_name <- paste(working_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.jpeg", sep="")
+  output_name <- paste(output_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.jpeg", sep="")
   ggsave(output_name, plot=curr_plot, dpi=800, device="jpeg", width=10, height=6)
   pos <- pos + 1
 }
