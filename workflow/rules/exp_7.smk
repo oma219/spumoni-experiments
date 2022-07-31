@@ -97,7 +97,7 @@ rule build_spumoni_full_index_exp7:
         curr_ref_file="exp7_indexes/spumoni_full_index/full_ref.fa"
         log_file="exp7_indexes/spumoni_full_index/full_ref.fa.log"
         cp {input[0]} $curr_ref_file
-        spumoni build -r $curr_ref_file -M -P -n &> $log_file
+        spumoni build -r $curr_ref_file -M -P -k -n &> $log_file
         """
 
 rule build_spumoni_promoted_index_exp7:
@@ -115,7 +115,7 @@ rule build_spumoni_promoted_index_exp7:
         curr_ref_file="exp7_indexes/spumoni_promoted_k{wildcards.k}_w{wildcards.w}/full_ref.fa"
         log_file="exp7_indexes/spumoni_promoted_k{wildcards.k}_w{wildcards.w}/full_ref.fa.log"
         cp {input[0]} $curr_ref_file
-        spumoni build -r $curr_ref_file -M -P -m -K {wildcards.k} -W {wildcards.w} &> $log_file
+        spumoni build -r $curr_ref_file -M -P -k -m -K {wildcards.k} -W {wildcards.w} &> $log_file
         """
 
 rule build_spumoni_dna_index_exp7:
@@ -133,7 +133,7 @@ rule build_spumoni_dna_index_exp7:
         curr_ref_file="exp7_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa"
         log_file="exp7_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa.log"
         cp {input[0]} $curr_ref_file
-        spumoni build -r $curr_ref_file -M -P -t -K {wildcards.k} -W {wildcards.w} &> $log_file
+        spumoni build -r $curr_ref_file -M -P -k -t -K {wildcards.k} -W {wildcards.w} &> $log_file
         """
 
 rule build_minimap2_index_exp7:
@@ -149,6 +149,7 @@ rule build_minimap2_index_exp7:
         cp {input[0]} $curr_ref_file 
         minimap2 -x map-ont -d {output} --split-prefix="exp7_indexes/minimap2_index/split_" {input} &> $log_file
         """
+
 # Section 2.3: Extract a batch of data that will be processed by SPUMONI or minimap2.
 #              For SPUMONI, it will just be the current batch while for minimap2 it will
 #              a consistently longer prefix of the read.

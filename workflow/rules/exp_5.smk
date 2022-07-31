@@ -213,7 +213,7 @@ rule build_spumoni_full_index_exp5:
         curr_ref_file="exp5_indexes/spumoni_full_index/full_ref.fa"
         log_file="exp5_indexes/spumoni_full_index/full_ref.fa.log"
         cp {input[0]} $curr_ref_file
-        spumoni build -r $curr_ref_file -M -P -n &> $log_file
+        spumoni build -r $curr_ref_file -M -P -n -k &> $log_file
         """
 
 rule build_spumoni_promoted_index_exp5:
@@ -231,7 +231,7 @@ rule build_spumoni_promoted_index_exp5:
         curr_ref_file="exp5_indexes/spumoni_promoted_k{wildcards.k}_w{wildcards.w}/full_ref.fa"
         log_file="exp5_indexes/spumoni_promoted_k{wildcards.k}_w{wildcards.w}/full_ref.fa.log"
         cp {input[0]} $curr_ref_file
-        spumoni build -r $curr_ref_file -M -P -m -K {wildcards.k} -W {wildcards.w} &> $log_file
+        spumoni build -r $curr_ref_file -M -P -m -k -K {wildcards.k} -W {wildcards.w} &> $log_file
         """
 
 rule build_spumoni_dna_index_exp5:
@@ -249,7 +249,7 @@ rule build_spumoni_dna_index_exp5:
         curr_ref_file="exp5_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa"
         log_file="exp5_indexes/spumoni_dna_k{wildcards.k}_w{wildcards.w}/full_ref.fa.log"
         cp {input[0]} $curr_ref_file
-        spumoni build -r $curr_ref_file -M -P -t -K {wildcards.k} -W {wildcards.w} &> $log_file
+        spumoni build -r $curr_ref_file -M -P -t -k -K {wildcards.k} -W {wildcards.w} &> $log_file
         """
 
 rule build_minimap2_index_exp5:
