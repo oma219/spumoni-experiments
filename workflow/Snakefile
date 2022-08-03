@@ -39,6 +39,7 @@ window_sizes_exp4 = [w for w in range(7, 24)]
 bin_sizes_exp4 = [50, 75, 150, 250, 350]
 
 num_datasets_exp5 = config["NUM_DATASETS_EXP5"]
+output_type_exp5 = config["OUTPUT_TYPE_EXP5"]
 
 window_sizes_exp6 = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 num_reads_exp6 = config["NUM_READS_EXP6"]
@@ -47,6 +48,7 @@ illumina_mismatch_prob_exp6 = config["ILLUMINA_MISMATCH_PROB_EXP6"]
 num_pos_reads_exp7 = config["NUM_POS_READS_EXP7"]
 num_null_reads_exp7 = config["NUM_NULL_READS_EXP7"]
 long_read_acc_exp7 = config["LONG_READ_ACC_EXP7"]
+output_type_exp7 = config["OUTPUT_TYPE_EXP7"]
 
 num_assemblies_exp8 = config["NUM_ASSEMBLIES_EXP8"]
 num_datasets_exp8 = config["NUM_DATASETS_EXP8"]
@@ -70,9 +72,10 @@ include: "rules/exp_6.smk"
 include: "rules/exp_7.smk"
 include: "rules/exp_8.smk"
 
-rule all:
-    input:
-        expand("exp8_analysis/assembly_{asm_num}/assembly_length_report.txt", asm_num=range(1, num_assemblies_exp8+1))
+# Rule for experiment 8 ...
+# rule all:
+#     input:
+#         expand("exp8_analysis/assembly_{asm_num}/assembly_length_report.txt", asm_num=range(1, num_assemblies_exp8+1))
 
 # Rule for experiment 4 ...
 # TODO: add final files here

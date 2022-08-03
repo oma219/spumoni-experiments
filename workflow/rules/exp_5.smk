@@ -317,7 +317,7 @@ rule classify_first_batch_using_spumoni_promoted_exp5:
         "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -m -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -m -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_first_batch_using_spumoni_dna_exp5:
@@ -329,7 +329,7 @@ rule classify_first_batch_using_spumoni_dna_exp5:
         "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_1/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -a -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -a -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_first_batch_using_spumoni_full_index_exp5:
@@ -341,7 +341,7 @@ rule classify_first_batch_using_spumoni_full_index_exp5:
         "exp5_results/spumoni_full_index/{class}_reads/batch_1/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -n -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -n -c
         """
 
 rule classify_first_batch_using_minimap2_exp5:
@@ -460,7 +460,7 @@ rule classify_second_batch_using_spumoni_promoted_exp5:
         "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -m -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -m -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_second_batch_using_spumoni_dna_exp5:
@@ -472,7 +472,7 @@ rule classify_second_batch_using_spumoni_dna_exp5:
         "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_2/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -a -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -a -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_second_batch_using_spumoni_full_index_exp5:
@@ -484,7 +484,7 @@ rule classify_second_batch_using_spumoni_full_index_exp5:
         "exp5_results/spumoni_full_index/{class}_reads/batch_2/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -n -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -n -c
         """
 
 rule classify_second_batch_using_minimap2_exp5:
@@ -588,7 +588,7 @@ rule classify_third_batch_using_spumoni_promoted_exp5:
         "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_3/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -m -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -m -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_third_batch_using_spumoni_dna_exp5:
@@ -600,7 +600,7 @@ rule classify_third_batch_using_spumoni_dna_exp5:
         "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_3/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -a -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -a -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_third_batch_using_spumoni_full_index_exp5:
@@ -612,7 +612,7 @@ rule classify_third_batch_using_spumoni_full_index_exp5:
         "exp5_results/spumoni_full_index/{class}_reads/batch_3/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -n -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -n -c
         """
 
 
@@ -717,7 +717,7 @@ rule classify_fourth_batch_using_spumoni_promoted_exp5:
         "exp5_results/spumoni_promoted_k{k}_w{w}/{class}_reads/batch_4/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -m -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -m -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_fourth_batch_using_spumoni_dna_exp5:
@@ -729,7 +729,7 @@ rule classify_fourth_batch_using_spumoni_dna_exp5:
         "exp5_results/spumoni_dna_k{k}_w{w}/{class}_reads/batch_4/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -a -K {wildcards.k} -W {wildcards.w} -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -a -K {wildcards.k} -W {wildcards.w} -c
         """
 
 rule classify_fourth_batch_using_spumoni_full_index_exp5:
@@ -741,7 +741,7 @@ rule classify_fourth_batch_using_spumoni_full_index_exp5:
         "exp5_results/spumoni_full_index/{class}_reads/batch_4/curr_batch.fa.resources"
     shell:
         """
-        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} -P -n -c
+        {time_prog} {time_format} --output={output[1]} spumoni run -r {input[0]} -p {input[1]} {output_type_exp5} -n -c
         """
 
 rule classify_fourth_batch_using_minimap2_exp5:
@@ -848,6 +848,13 @@ rule analyze_spumoni_promoted_results_into_csv_line_exp5:
         component_2=$(ls -l {input[13]} | awk '{{print $5}}')
         total_index_size=$(($component_1+$component_2))
 
+        # Change index size measurements when using MS-index (default is PML)
+        if [[ "{output_type_exp5}" == *"-M"* ]]; then
+            component_1=$(ls -l {input[14]} | awk '{{print $5}}')
+            component_2=$(ls -l {input[15]} | awk '{{print $5}}')
+            total_index_size=$(($component_1+$component_2))
+        fi
+
         # Print to output file
         echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
         echo "spumoni_promoted_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
@@ -908,6 +915,13 @@ rule analyze_spumoni_dna_results_into_csv_line_exp5:
         component_2=$(ls -l {input[13]} | awk '{{print $5}}')
         total_index_size=$(($component_1+$component_2))
 
+        # Change index size measurements when using MS-index (default is PML)
+        if [[ "{output_type_exp5}" == *"-M"* ]]; then
+            component_1=$(ls -l {input[14]} | awk '{{print $5}}')
+            component_2=$(ls -l {input[15]} | awk '{{print $5}}')
+            total_index_size=$(($component_1+$component_2))
+        fi
+
         # Print to output file
         echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
         echo "spumoni_dna_k{wildcards.k}_w{wildcards.w},$TP,$FN,$FP,$TN,$accuracy,$sensitivity,$specificity,$total_time,$peak_mem,$total_index_size" >> {output}
@@ -967,6 +981,13 @@ rule analyze_spumoni_full_index_results_into_csv_line_exp5:
         component_1=$(ls -l {input[12]} | awk '{{print $5}}')
         component_2=$(ls -l {input[13]} | awk '{{print $5}}')
         total_index_size=$(($component_1+$component_2))
+
+        # Change index size measurements when using MS-index (default is PML)
+        if [[ "{output_type_exp5}" == *"-M"* ]]; then
+            component_1=$(ls -l {input[14]} | awk '{{print $5}}')
+            component_2=$(ls -l {input[15]} | awk '{{print $5}}')
+            total_index_size=$(($component_1+$component_2))
+        fi
 
         # Print to output file
         echo "approach,TP,FN,FP,TN,accuracy,sensitivity,specificity,totaltime,peakmem,indexsize" >> {output}
