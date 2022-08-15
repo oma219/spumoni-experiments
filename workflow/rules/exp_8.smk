@@ -61,7 +61,7 @@ rule build_spumoni_index_of_contamination_exp8:
     shell:
         """
         cp {input} exp8_index/full_ref.fa
-        spumoni build -r exp8_index/full_ref.fa -n -M -P
+        spumoni build -r exp8_index/full_ref.fa -n -M -P &> exp8_index/full_ref.fa.log
         """
 
 
