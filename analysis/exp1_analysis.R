@@ -16,8 +16,8 @@ data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/
                 "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/trial_3/data/ont_ms_doc_analysis.csv")
 output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/trial_3/plots/"
 
-dataset_names <- c("E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria", "E. faecalis", "Staphylococcus")
-x_labels <- c("Random Reads", "E. coli", "Salmonella", "Listeria", "Pseudomonas", "Bacillus", "Lactobacteria", "E. faecalis", "Staphylococcus")
+dataset_names <- c("E. coli", "S. enterica", "L. monocytogenes", "P. aeruginosa", "B. subtilis", "L. fermentum", "E. faecalis", "S. aureus")
+x_labels <- c("Random Reads", "E. coli", "S. enterica", "L. monocytogenes", "P. aeruginosa", "B. subtilis", "L. fermentum", "E. faecalis", "S. aureus")
 
 columns_to_extract <- c("class_1_percent", "class_2_percent", "class_3_percent",
                         "class_4_percent", "class_5_percent", "class_6_percent", "class_7_percent",
@@ -45,12 +45,13 @@ make_group_bar_plot <- function(input_df, read_type) {
           theme_bw() +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
+                axis.text.x=element_text(face="italic", size=9),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
-                legend.text=element_text(size=12),
+                legend.text=element_text(size=12, face="italic"),
                 legend.box="vertical",
                 legend.title=element_text(size=12),
-                axis.text=element_text(size=12, color="black")) +
+                axis.text.y=element_text(size=12, color="black")) +
           scale_y_continuous(breaks=seq(0, 1.0, 0.1)) +
           scale_x_discrete(labels=x_labels) +
           labs(x="Simulated Read Set",
