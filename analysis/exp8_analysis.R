@@ -10,12 +10,13 @@ library(ggplot2)
 library(ggpubr)
 library(cowplot)
 library(data.table)
+library(pafr)
 
 ########################################################################
 # IMPORTANT: Data paths
 ########################################################################
-data_working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_1/data/assembly_2/"
-output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_1/plots/assembly_2/"
+data_working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_2/data/assembly_1/"
+output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_2/plots/assembly_1/"
 
 ########################################################################
 # Helper methods for generating plots
@@ -36,7 +37,7 @@ make_length_plot <- function(contig_name, input_df, line_color) {
                 axis.text=element_text(size=10, color="black")) +
           #scale_y_continuous(breaks=seq(0, 7000, 1000)) +
           #scale_x_continuous(breaks=seq(0, 40000, 5000)) +
-          labs(y="Matching Statistic Length", x=x_label)
+          labs(y="Pseudomatching Length", x=x_label)
   return(plot)         
 }
 
@@ -46,7 +47,8 @@ make_single_boxplot <- function(input_df) {
   upper <- box_plot_stats[5]
     
   plot <- ggplot(subset(input_df, name=="All other contigs"), aes(x=name, y=length, fill=status)) +
-          geom_boxplot(outlier.shape=NA) +
+          #geom_boxplot(outlier.shape=NA) +
+          geom_boxplot() +
           theme_classic() +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =10),
@@ -67,19 +69,18 @@ make_comparison_plot <- function(input_df, lower, upper) {
   plot <- ggplot(input_df, aes(x=name, y=length, fill=status)) + 
           geom_boxplot(outlier.shape=NA) +
           theme_classic() +
-          theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
+          theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
                 axis.title.x=element_text(size =12),
                 axis.title.y=element_text(size=12),
-                legend.text=element_text(size=12),
-                #axis.text.x = element_text(angle = 0, vjust=0.5, size=8),
-                axis.text.x = element_text(angle = 20, vjust=0.5, size=8),
+                legend.text=element_text(size=10),
+                axis.text.x = element_text(angle = 0, vjust=0.5, size=6),
+                axis.text.y =element_text(size=8, color="black"),
                 legend.box="horizontal",
-                legend.title=element_text(size=12),
-                legend.position=c(0.95, 0.9),
-                axis.text.y =element_text(size=10, color="black")) +
+                legend.title=element_text(size=10),
+                legend.position=c(0.8, 0.9)) +
         scale_y_continuous(limits=c(lower, upper * 1.1)) +
         scale_fill_discrete(name="", labels=c("Normal", "Suspicious")) +
-        labs(y="Matching Statistic Length", x="Contigs") 
+        labs(y="Pseudomatching Length", x="Contigs") 
   return(plot)
 }
 
@@ -139,36 +140,72 @@ combined_plot <- ggdraw() +
 combined_plot
 
 
-# Create a plot showing MS across a suspicious contig ...
-curr_path <- paste(data_working_dir, "top_contig_0_lengths.csv", sep="")
-suspicious_df <- read.csv(curr_path, header=FALSE)
+####################################################
+# EDIT: Commented out these sub-plots
+####################################################
 
-colnames(suspicious_df) <- c("name", "pos", "length")
-contig_name <- suspicious_df[,1][1]
+# # Create a plot showing MS across a suspicious contig ...
+# curr_path <- paste(data_working_dir, "top_contig_0_lengths.csv", sep="")
+# suspicious_df <- read.csv(curr_path, header=FALSE)
+# 
+# colnames(suspicious_df) <- c("name", "pos", "length")
+# contig_name <- suspicious_df[,1][1]
+# 
+# plot_3 <- make_length_plot(contig_name, suspicious_df, "#00BFC4")
+# plot_3
+# 
+# # Create a plot showing MS across a normal contig ...
+# curr_path <- paste(data_working_dir, "regular_contig_0_lengths.csv", sep="")
+# normal_df <- read.csv(curr_path, header=FALSE)
+# 
+# colnames(normal_df) <- c("name", "pos", "length")
+# contig_name <- normal_df[,1][1]
+# 
+# plot_4 <- make_length_plot(contig_name, normal_df, "#F8766D")
+# plot_4
 
-plot_3 <- make_length_plot(contig_name, suspicious_df, "#00BFC4")
-plot_3
+####################################################
+# EDIT: Start of new sub-plot ...
+####################################################
 
-# Create a plot showing MS across a normal contig ...
-curr_path <- paste(data_working_dir, "regular_contig_0_lengths.csv", sep="")
-normal_df <- read.csv(curr_path, header=FALSE)
+input_paf_file <- "/Users/omarahmed/Downloads/test.paf"
+paf_df <- read_paf(input_paf_file)
 
-colnames(normal_df) <- c("name", "pos", "length")
-contig_name <- normal_df[,1][1]
+# sub-sample to high-quality alignments of suspicious contigs
+sus_contigs <- c("ctg7180000000054", "ctg7180000000587", "ctg7180000000651", "ctg7180000000530")
+sub_paf_df <- subset(paf_df, mapq > 30 & qname %in% sus_contigs)
 
-plot_4 <- make_length_plot(contig_name, normal_df, "#F8766D")
-plot_4
+dot_plot <- ggplot(data=sub_paf_df, aes(x=qstart, xend=qend, y=tstart, yend=tend)) + 
+            geom_segment() + 
+            labs(x="Contig coordinates", y="Database coordinates") +
+            theme_bw() +          
+            theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
+                  axis.title.x=element_text(size =12),
+                  axis.title.y=element_text(size=12),
+                  legend.text=element_text(size=10),
+                  axis.text.x = element_text(angle=0, size=6),
+                  axis.text.y =element_text(size=6, color="black"),
+                  legend.box="horizontal",
+                  legend.title=element_text(size=10)) +
+            facet_wrap(vars(qname), scales="free")
+dot_plot
 
-# Combine the plots
-total_plot <- ggarrange(combined_plot, 
-                        ggarrange(plot_3, plot_4, ncol=2, labels=c("b", "c")), 
-                        nrow=2, labels=c("a"))
+
+####################################################
+# Combine all sub-plots and save them
+####################################################
+
+# EDIT: old total plot (save just in case)
+# total_plot <- ggarrange(combined_plot, 
+#                         ggarrange(plot_3, plot_4, ncol=2, labels=c("b", "c")), 
+#                         nrow=2, labels=c("a"))
+
+total_plot <- ggarrange(plot_1, dot_plot, nrow=1, ncol=2, labels=c("a", "b"))
 total_plot
 
 # Saving the plot: a vector and non-vector graphic
-output_name <- paste(output_dir, "exp8_plot_assembly_2.jpeg", sep="")
-ggsave(output_name, plot=total_plot, dpi=800, device="jpeg", width=12, height=8)
+output_name <- paste(output_dir, "exp8_plot_assembly_1.jpeg", sep="")
+ggsave(output_name, plot=total_plot, dpi=800, device="jpeg", width=10, height=5)
 
-output_name <- paste(output_dir, "exp8_plot_assembly_2.pdf", sep="")
-ggsave(output_name, plot=total_plot, dpi=800, device="pdf", width=12, height=8)
-
+output_name <- paste(output_dir, "exp8_plot_assembly_1.pdf", sep="")
+ggsave(output_name, plot=total_plot, dpi=800, device="pdf", width=10, height=5)
