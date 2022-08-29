@@ -11,6 +11,7 @@ library(ggpubr)
 library(cowplot)
 library(data.table)
 library(pafr)
+library(stringr)
 
 ########################################################################
 # IMPORTANT: Data paths
@@ -82,6 +83,51 @@ make_comparison_plot <- function(input_df, lower, upper) {
         scale_fill_discrete(name="", labels=c("Normal", "Suspicious")) +
         labs(y="Pseudomatching Length", x="Contigs") 
   return(plot)
+}
+
+
+process_paf_df <- function(input_df) {
+
+  # create a new dataframe for dot plot
+  columns <- c("qname", "x", "y") 
+  out_df <- data.frame(qname=character(sum(input_df[,"alen"])),
+                       x=numeric(sum(input_df[,"alen"])),
+                       y=numeric(sum(input_df[,"alen"])))
+  colnames(out_df) = columns
+
+  # Go through each alignment and generate dots for each base
+  curr_row <- 1
+  for (i in 1:nrow(input_df)) {
+    curr_query_seq <- input_df[i,"qname"]
+    qstart <- input_df[i,"qstart"]; qend <- input_df[i,"qend"]
+    tstart <- input_df[i,"tstart"]; tend <- input_df[i,"tend"]
+    cigar <- input_df[i,"cg"]
+    curr_x <- qstart; curr_y <- tstart
+    
+    # Go through each element in CIGAR
+    for (x in str_extract_all(c(cigar), "[0-9]+[A-Z]")[[1]]) {
+        length <- as.integer(substr(x, 1, nchar(x)-1))
+        op <- substr(x, nchar(x), nchar(x))
+        
+        # Go through each base and add to the overall dataframe
+        for (j in 1:length) {
+            if (op == "M") {
+                out_df[curr_row,] <- c(curr_query_seq, curr_x, curr_y)
+                curr_row <- curr_row + 1
+                curr_x <- curr_x + 1; curr_y <- curr_y + 1;
+            } else if (op == "I") {
+                curr_y <- curr_y + length; break;
+            } else if (op == "D") {
+                curr_x <- curr_x + length; break;
+            } else {
+              warning("Unrecognized character in the CIGAR string parsing")
+            }
+        }
+    }
+    print(curr_query_seq)
+    print(i)
+  }
+  return(out_df)
 }
 
 ########################################################################
@@ -168,15 +214,29 @@ combined_plot
 # EDIT: Start of new sub-plot ...
 ####################################################
 
+# load in paf file
 input_paf_file <- "/Users/omarahmed/Downloads/test.paf"
 paf_df <- read_paf(input_paf_file)
 
-# sub-sample to high-quality alignments of suspicious contigs
-sus_contigs <- c("ctg7180000000054", "ctg7180000000587", "ctg7180000000651", "ctg7180000000530")
-sub_paf_df <- subset(paf_df, mapq > 30 & qname %in% sus_contigs)
+# remove un-needed alignments
+paf_df_after_removal <- subset(paf_df, qname!="ctg7180000000054" |  tname!="NZ_CP086334.1")
+paf_df_after_removal <- subset(paf_df_after_removal, qname!="ctg7180000000587" |  tname!="NZ_CP067426.1")
+paf_df_after_removal <- subset(paf_df_after_removal, qname!="ctg7180000000651" |  tname!="NZ_CP067426.1")
+paf_df_after_removal <- subset(paf_df_after_removal, qname!="ctg7180000000530" |  tname!="NZ_CP067426.1")
 
-dot_plot <- ggplot(data=sub_paf_df, aes(x=qstart, xend=qend, y=tstart, yend=tend)) + 
-            geom_segment() + 
+# generate data-frame for dot-plot
+out_df <- process_paf_df(paf_df_after_removal)
+
+# remove any rows that are empty in dataframe
+sus_contigs <- c("ctg7180000000054", "ctg7180000000587", "ctg7180000000651", "ctg7180000000530")
+out_df_for_plot <- subset(out_df, qname %in% sus_contigs)
+
+# subset the dataframe for quick plotting
+out_df_subset <- out_df_for_plot[seq(1, nrow(out_df_for_plot), 50),]
+
+# make the dot plot
+dot_plot <- ggplot(data=out_df_subset, aes(x=as.integer(x), y=as.integer(y))) + 
+            geom_point(size=0.1) + 
             labs(x="Contig coordinates", y="Database coordinates") +
             theme_bw() +          
             theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
@@ -187,7 +247,7 @@ dot_plot <- ggplot(data=sub_paf_df, aes(x=qstart, xend=qend, y=tstart, yend=tend
                   axis.text.y =element_text(size=6, color="black"),
                   legend.box="horizontal",
                   legend.title=element_text(size=10)) +
-            facet_wrap(vars(qname), scales="free")
+            facet_wrap(vars(qname), scales="free") 
 dot_plot
 
 
