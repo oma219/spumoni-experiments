@@ -250,7 +250,7 @@ rule run_minimap2_for_paf_files_exp8:
         index="exp8_dotplot_data/minimap2_index/full_ref.fa"
         input_file="exp8_dotplot_data/minimap2_results/assembly_{wildcards.asm_num}/input_assembly.fa"
         cp {input[0]} $input_file
-        minimap2 -x asm5 $index $input_file > {output}
+        minimap2 -c -x asm5 $index $input_file > {output}
         """
 
 
