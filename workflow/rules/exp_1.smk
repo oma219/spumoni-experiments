@@ -19,7 +19,7 @@ def get_group_lists_exp1(wildcards):
             file_list.append(f"data/dataset_{wildcards.num}/" + data_file)
     return file_list
 
-def get_files_for_analyzing_document_numbers(wildcards):
+def get_files_for_analyzing_document_numbers_exp1(wildcards):
     """ Returns the input filelist for all files within a certain read-type/output-type group """
     output_type = wildcards.output
     read_type = wildcards.type
@@ -65,10 +65,12 @@ rule build_spumoni_index_exp1:
     input:
         "exp1_file_list/genome_file_list.txt"
     output:
-        "exp1_indexes/spumoni_full_ref.fa.thrbv.ms",
-        "exp1_indexes/spumoni_full_ref.fa.thrbv.spumoni"
-    run:
-        shell("spumoni build -i {input[0]} -b exp1_indexes/ -M -P -n -d")
+        "exp1_indexes/spumoni_full_ref.bin.thrbv.ms",
+        "exp1_indexes/spumoni_full_ref.bin.thrbv.spumoni"
+    shell:
+        """
+        spumoni build -i {input[0]} -b exp1_indexes/ -M -P -m -K 4 -W 11 -d
+        """
 
 # Section 2.3: Simulate both long and short 
 #              reads, first just more than needed, and 
@@ -84,7 +86,7 @@ rule generate_raw_positive_short_reads_exp1:
         set +o pipefail;
         positive_genome=$(ls data/dataset_{wildcards.num}/*.fna | shuf | head -n1)
 
-        art_illumina -ss HS25 -i $positive_genome -na -l 150 -f 2.0 \
+        art_illumina -ss HS25 -i $positive_genome -na -l 150 -f 4.0 \
         -o exp1_raw_reads/illumina/dataset_{wildcards.num}/dataset_{wildcards.num}_illumina_reads
         """
 
@@ -98,7 +100,7 @@ rule generate_raw_positive_long_reads_exp1:
         set +o pipefail;
         positive_genome=$(ls data/dataset_{wildcards.num}/*.fna | shuf | head -n1)
 
-        pbsim --depth 25.0 --prefix exp1_raw_reads/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads \
+        pbsim --depth 45.0 --prefix exp1_raw_reads/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads \
         --hmm_model {pbsim_model} --accuracy-mean 0.95 --length-min 200 $positive_genome
         cat 'exp1_raw_reads/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads'*.fastq > {output}
         ls  'exp1_raw_reads/ont/dataset_{wildcards.num}/dataset_{wildcards.num}_ont_reads_'*.fastq | xargs rm
@@ -169,29 +171,29 @@ rule copy_reads_to_result_folder_exp1:
 rule run_spumoni_ms_on_reads_exp1:
     input:
         "exp1_results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa",
-        "exp1_indexes/spumoni_full_ref.fa.thrbv.ms"
+        "exp1_indexes/spumoni_full_ref.bin.thrbv.ms"
     output:
         "exp1_results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.lengths",
         "exp1_results/ms/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers"
     shell:
-        "spumoni run -r exp1_indexes/spumoni_full_ref.fa -p {input[0]} -M -n -d"
+        "spumoni run -r exp1_indexes/spumoni_full_ref.bin -p {input[0]} -M -m -K 4 -W 11 -d"
 
 rule run_spumoni_pml_on_reads_exp1:
     input:
         "exp1_results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa",
-        "exp1_indexes/spumoni_full_ref.fa.thrbv.spumoni"
+        "exp1_indexes/spumoni_full_ref.bin.thrbv.spumoni"
     output:
         "exp1_results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.pseudo_lengths",
         "exp1_results/pml/{type}/dataset_{num}/dataset_{num}_{type}_reads.fa.doc_numbers"
     shell:
-        "spumoni run -r exp1_indexes/spumoni_full_ref.fa -p {input[0]} -P -n -d"
+        "spumoni run -r exp1_indexes/spumoni_full_ref.bin -p {input[0]} -P -m -K 4 -W 11 -d"
 
 # Section 2.6: Analyze the output *.doc_number files from
 #              SPUMONI
 
 rule analyze_document_numbers_exp1:
     input:
-        get_files_for_analyzing_document_numbers
+        get_files_for_analyzing_document_numbers_exp1
     output:
         "exp1_analysis/{type}_{output}_doc_analysis.csv"
     run:

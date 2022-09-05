@@ -1,4 +1,4 @@
-DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp8_trial2"
+DATA_ROOT: "/home/oahmed6/scr16_blangme2/oahmed/spumoni_exps/exp1_full"
 NUM_DATASETS: 8
 REPO_DIR: "/home/oahmed6/spumoni_exps"
 SPUMONI_DIR: "/home/oahmed6/spumoni/build"
@@ -7,7 +7,7 @@ TIME_PROG: "/usr/bin/time"
 TIME_FORMAT: "--format='user= %U system= %S elapsed= %e CPU= %P MemMax= %M'"
 READS_PER_DATASET: 2000
 NUM_DATASETS_EXP1: 8
-READS_PER_DATASET_EXP1: 5000
+READS_PER_DATASET_EXP1: 10000
 DATASET_NAME_EXP2: "ecoli_500"
 NUM_READS_EXP3: 25000
 ILLUMINA_MISMATCH_PROB_EXP3: 0.01

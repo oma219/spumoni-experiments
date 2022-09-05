@@ -73,10 +73,10 @@ include: "rules/exp_7.smk"
 include: "rules/exp_8.smk"
 
 
-rule all:
-    input:
-        "exp8_results/blast/assembly_1/input_assembly.fa",
-        "exp8_results/blast/assembly_3/input_assembly.fa"
+#rule all:
+#    input:
+#        "exp8_results/blast/assembly_1/input_assembly.fa",
+#        "exp8_results/blast/assembly_3/input_assembly.fa"
 
 # Rule for experiment 8 ...
 # rule all:
@@ -99,7 +99,7 @@ rule all:
 #         "total_results/exp2_index_stats.csv"
 
 # Rule for experiment 1 ...
-# rule all:
-#     input:
-#         expand("analysis_exp1/{type}_{output}_doc_analysis.csv", type=['illumina', 'ont'], output=['ms', 'pml'])
+rule all:
+    input:
+        expand("exp1_analysis/{type}_{output}_doc_analysis.csv", type=['illumina', 'ont'], output=['ms', 'pml'])
 
