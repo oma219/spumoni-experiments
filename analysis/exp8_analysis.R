@@ -89,8 +89,9 @@ make_comparison_plot <- function(input_df, lower, upper) {
 process_paf_df <- function(input_df) {
 
   # create a new dataframe for dot plot
-  columns <- c("qname", "x", "y") 
+  columns <- c("qname", "tname","x", "y") 
   out_df <- data.frame(qname=character(sum(input_df[,"alen"])),
+                       tname=character(sum(input_df[,"alen"])),
                        x=numeric(sum(input_df[,"alen"])),
                        y=numeric(sum(input_df[,"alen"])))
   colnames(out_df) = columns
@@ -99,6 +100,7 @@ process_paf_df <- function(input_df) {
   curr_row <- 1
   for (i in 1:nrow(input_df)) {
     curr_query_seq <- input_df[i,"qname"]
+    curr_target_seq <- input_df[i,"tname"]
     qstart <- input_df[i,"qstart"]; qend <- input_df[i,"qend"]
     tstart <- input_df[i,"tstart"]; tend <- input_df[i,"tend"]
     cigar <- input_df[i,"cg"]
@@ -112,7 +114,7 @@ process_paf_df <- function(input_df) {
         # Go through each base and add to the overall dataframe
         for (j in 1:length) {
             if (op == "M") {
-                out_df[curr_row,] <- c(curr_query_seq, curr_x, curr_y)
+                out_df[curr_row,] <- c(curr_query_seq, curr_target_seq, curr_x, curr_y)
                 curr_row <- curr_row + 1
                 curr_x <- curr_x + 1; curr_y <- curr_y + 1;
             } else if (op == "I") {
@@ -234,22 +236,34 @@ out_df_for_plot <- subset(out_df, qname %in% sus_contigs)
 # subset the dataframe for quick plotting
 out_df_subset <- out_df_for_plot[seq(1, nrow(out_df_for_plot), 50),]
 
+# change facet titles to include length
+contig_names <- list('ctg7180000000054'="ctg7180000000054 (27.1 kb)",
+                     'ctg7180000000587'="ctg7180000000587 (22.9 kb)",
+                     'ctg7180000000651'="ctg7180000000651 (23.3 kb)",
+                     'ctg7180000000530'="ctg7180000000530 (22.8 kb)")
+
+facet_labeller <- function(variable, value){
+  return(contig_names[value])
+}
+contig_names['ctg7180000000054']
 # make the dot plot
-dot_plot <- ggplot(data=out_df_subset, aes(x=as.integer(x), y=as.integer(y))) + 
+dot_plot <- ggplot(data=out_df_subset, aes(x=as.integer(x), y=as.integer(y), color=tname)) + 
             geom_point(size=0.1) + 
             labs(x="Contig coordinates", y="Database coordinates") +
             theme_bw() +          
             theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
                   axis.title.x=element_text(size =12),
                   axis.title.y=element_text(size=12),
-                  legend.text=element_text(size=10),
                   axis.text.x = element_text(angle=0, size=6),
                   axis.text.y =element_text(size=6, color="black"),
                   legend.box="horizontal",
-                  legend.title=element_text(size=10)) +
-            facet_wrap(vars(qname), scales="free") 
+                  legend.position="bottom",
+                  legend.margin=margin(t=0, r=0, b=0, l=0, unit="cm"),
+                  legend.text=element_text(size=8),
+                  legend.title=element_text(size=8)) +
+            facet_wrap(vars(qname), scales="free", labeller=facet_labeller) +
+            scale_color_discrete(name="Accessions", labels=c("NZ_CP067426.1", "NZ_CP086334.1", "NZ_CP091038.1"))
 dot_plot
-
 
 ####################################################
 # Combine all sub-plots and save them
