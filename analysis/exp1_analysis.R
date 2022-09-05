@@ -12,9 +12,9 @@ library(data.table)
 ########################################################################
 # IMPORTANT: Experiment-dependent variables below, need to be set ...
 ########################################################################
-data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/trial_3/data/illumina_ms_doc_analysis.csv",
-                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/trial_3/data/ont_ms_doc_analysis.csv")
-output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/trial_3/plots/"
+data_paths <- c("/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/trial_4/data/illumina_ms_doc_analysis.csv",
+                "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_1/trial_4/data/ont_ms_doc_analysis.csv")
+output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_1/trial_4/plots/"
 
 dataset_names <- c("E. coli", "S. enterica", "L. monocytogenes", "P. aeruginosa", "B. subtilis", "L. fermentum", "E. faecalis", "S. aureus")
 x_labels <- c("Random Reads", "E. coli", "S. enterica", "L. monocytogenes", "P. aeruginosa", "B. subtilis", "L. fermentum", "E. faecalis", "S. aureus")
