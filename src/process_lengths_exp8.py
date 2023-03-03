@@ -9,15 +9,18 @@ import os
 import sys
 import argparse
 import random
+import numpy as np
 
 def main(args):
-    """ process the lengths file and generate report and csvs """
+    """ Process the lengths file and generate report and csvs """
 
-    # rank all the contigs by the longest length
+    ## Step 1: Rank all the contigs by the longest length
     contaminated_bases = 0
+    uncontaminated_bases = 0
     top_contigs = []
+    full_info_dict = {}
 
-    print("[log] starting to process the lengths file ...")
+    print("[log] starting to process the lengths file from SPUMONI")
     with open(args.lengths_file, "r") as input_fd:
         curr_seq = ""
         avg_dict = {}
@@ -28,30 +31,43 @@ def main(args):
                 lengths = [int(x) for x in line.split()]
                 avg = sum(lengths)/len(lengths)
                 avg_dict[curr_seq] = avg
+                full_info_dict[curr_seq] = [len(lengths), np.percentile(lengths, 25), np.percentile(lengths, 50), np.percentile(lengths, 75), np.percentile(lengths, 90), avg]
 
                 # Add contig if its average is suspiously high
                 if avg >= 2:
                     contaminated_bases += len(lengths)
                     top_contigs.append(curr_seq)
-    print("[log] finished finding avg length for each contig")
+                else:
+                    uncontaminated_bases += len(lengths)
+    print("[log] finished finding avg length for each contig\n")
 
-    # sort them, and assert that we have found some suspicious contigs
+    ## Step 2: sort them, and assert that we have found some suspicious contigs
     sorted_dict = dict(sorted(avg_dict.items(), key=lambda item: item[1]))
-    #top_contigs = []
-    #for key in list(sorted_dict)[::-1]:
-    #    if sorted_dict[key] >= 2:
-    #        top_contigs.append(key)
+
+    # top_contigs = []
+    # for key in list(sorted_dict)[::-1]:
+    #     if sorted_dict[key] >= 2:
+    #         top_contigs.append(key)
+    
     assert len(top_contigs) > 0, "assertion error: did not find any contigs with large average MS"
     print(f"[log] Out of {len(sorted_dict)} contigs, {len(top_contigs)} contigs appear to have contamination, a total of {contaminated_bases} bp")
+    print(f"[log] There is a total of {uncontaminated_bases} 'uncontaminated' bp\n")
 
-    # write out a report containing each contig and max length
+    ## Step 3: write out a report containing each contig and max length, as 
+    ## well as a csv-file documenting the percentiles for each contig
     with open(args.output_dir + "assembly_length_report.txt", "w") as out_fd:
-        out_fd.write("{:30}{:20}\n".format("name:", "max length:"))
+        out_fd.write("{:30}{:20}\n".format("name:", "avg length:"))
         for name in list(sorted_dict)[::-1]:
             out_fd.write("{:30}{:<20}\n".format(name, sorted_dict[name]))
     print("[log] wrote out report with all average lengths")
 
-    # write out a csv-file for each of the top-ten contigs
+    with open(args.output_dir + "assembly_percentile_report.csv", "w") as out_fd:
+        out_fd.write("contig,contiglength,25percent,50percent,75percent,90percent,mean\n")
+        for key in dict(sorted(full_info_dict.items(), key=lambda item: item[1][-1])).keys():
+            out_fd.write(",".join([key] + [str(x) for x in full_info_dict[key]]) + "\n")
+    print("[log] wrote out report with percentile info for all contigs")
+
+    ## Step 4: write out a csv-file for each of the top-ten contigs
     with open(args.lengths_file, "r") as input_fd:
         curr_seq = ""
         total_sampled = []
@@ -70,18 +86,19 @@ def main(args):
                     lengths = [int(x) for x in line.split()]
                     for i in range(0, len(lengths), 10000):
                         total_sampled.append(lengths[i])
-    print("[log] wrote out the top-contigs to csv (those with avg>=2)")
+    print("[log] wrote out the top-contigs to csv (those with avg>=2)\n")
 
-    # write out a csv-file for the "regular" contigs
+    ## Step 5: write out a csv-file for the "regular" contigs
     with open(args.output_dir + "regular_contigs.csv", "w") as out_fd:
         for length in total_sampled:
             out_fd.write(f"regular,{length}\n")
     print("[log] finished writing sub-sampled csv file for regular contigs")
-    exit(0)
 
+    ###############################################################################
     # Decided to comment this out, since decided to not include in figure anymore 
-    """
-    # choose a four random contig that were not suspicious and write out to csv file
+    ###############################################################################
+
+    ## Step 6: choose a four random contig that were not suspicious and write out to csv file
     random_normal_contigs = random.sample(list(sorted_dict)[:-len(top_contigs)], k=4)
 
     # write out a csv-file for each of the top-ten contigs
@@ -98,8 +115,8 @@ def main(args):
                     with open(args.output_dir + f"regular_contig_{index}_lengths.csv", "w") as out_fd:
                         for i, l in enumerate(lengths):
                             out_fd.write(f"{curr_seq[1:]},{i},{l}\n")
-    print("[log] finished writing csv file for regular contigs")
-    """
+    print("[log] finished writing csv file for four random regular contigs\n")
+    
 
 def parse_arguments():
     """ Parse the command-line arguments """
