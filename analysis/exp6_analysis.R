@@ -36,7 +36,7 @@ make_speedup_plot <- function(input_df) {
                 legend.text=element_text(size=12),
                 legend.box="vertical",
                 legend.title=element_text(size=12),
-                legend.position= c(0.75,0.15),
+                legend.position= "none", #c(0.75,0.15),
                 legend.background = element_rect(linetype="solid", color="black"),
                 axis.text=element_text(size=12, color="black")) +
           scale_x_continuous(breaks=seq(0, 32, 2)) +
@@ -57,11 +57,11 @@ make_pml_index_plot <- function(input_df) {
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
                 axis.title.y=element_text(size=14),
-                legend.position = "none", 
+                legend.position = c(0.25,0.15), 
                 legend.background = element_rect(linetype="solid", color="black"),
-                legend.text=element_text(size=10),
+                legend.text=element_text(size=12),
                 legend.box="vertical",
-                legend.title=element_text(size=10),
+                legend.title=element_text(size=12),
                 axis.text=element_text(size=12, color="black")) +
           scale_x_continuous(breaks=seq(0, 32, 2)) +
           scale_y_continuous(breaks=seq(0, 1.5, 0.2), limits=c(0,NA)) +
