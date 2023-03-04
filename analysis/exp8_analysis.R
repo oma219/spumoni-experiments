@@ -12,12 +12,13 @@ library(cowplot)
 library(data.table)
 library(pafr)
 library(stringr)
+library(ggbeeswarm)
 
 ########################################################################
 # IMPORTANT: Data paths
 ########################################################################
-data_working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_2/data/assembly_1/"
-output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_2/plots/assembly_1/"
+data_working_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_4/data/"
+output_dir <- "/Users/omarahmed/downloads/current_research/spumoni_exps/exp_8/trial_4/plots/"
 
 ########################################################################
 # Helper methods for generating plots
@@ -61,7 +62,7 @@ make_single_boxplot <- function(input_df) {
                 axis.text=element_text(size=8, color="black"),
                 plot.margin = unit(c(0,0,0,0), "cm")) +
         scale_fill_discrete(name="", labels=c("Normal", "Suspicious")) +
-        scale_y_continuous(limits=c(lower, upper)) +
+        #scale_y_continuous(limits=c(lower, upper)) +
         labs(y="", x="")
   return (plot)
 }
@@ -71,19 +72,79 @@ make_comparison_plot <- function(input_df, lower, upper) {
           geom_boxplot(outlier.shape=NA) +
           theme_classic() +
           theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
-                axis.title.x=element_text(size =12),
+                axis.title.x=element_text(size=12, vjust=-0.5),
                 axis.title.y=element_text(size=12),
                 legend.text=element_text(size=10),
-                axis.text.x = element_text(angle = 0, vjust=0.5, size=6),
+                axis.text.x = element_text(angle = 0, vjust=0.5, size=9),
                 axis.text.y =element_text(size=8, color="black"),
                 legend.box="horizontal",
                 legend.title=element_text(size=10),
                 legend.position=c(0.8, 0.9)) +
         scale_y_continuous(limits=c(lower, upper * 1.1)) +
         scale_fill_discrete(name="", labels=c("Normal", "Suspicious")) +
+        scale_x_discrete(labels=c("All other contigs"="All other contigs\n(n=62482)", 
+                                  "ctg7180000000054"="ctg7180000000054\n(n=4658)", 
+                                  "ctg7180000000530"="ctg7180000000530\n(n=4671)", 
+                                  "ctg7180000000587"="ctg7180000000587\n(n=4723)", 
+                                  "ctg7180000000651"="ctg7180000000651\n(n=5476)")) +
         labs(y="Pseudomatching Length", x="Contigs") 
   return(plot)
 }
+
+make_comparison_plot_option2 <- function(input_df, lower, upper) {
+  plot <- ggplot(input_df, aes(x=name, y=length, fill=status)) + 
+          geom_boxplot(outlier.shape=NA) +
+          theme_classic() +
+          theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
+                axis.title.x=element_text(size=12, vjust=-0.5),
+                axis.title.y=element_text(size=12),
+                legend.text=element_text(size=10),
+                axis.text.x = element_text(angle = 0, vjust=0.5, size=9),
+                axis.text.y =element_text(size=8, color="black"),
+                legend.box="horizontal",
+                legend.title=element_text(size=10),
+                legend.position=c(0.8, 0.9)) +
+          scale_y_continuous(limits=c(lower, upper * 1.1)) +
+          scale_fill_discrete(name="", labels=c("Normal", "Suspicious")) +
+          scale_x_discrete(labels=c("ctg7180000000220"="ctg7180000000220\n(n=5673)",
+                                    "ctg7180000000551"="ctg7180000000551\n(n=31165)", 
+                                    "ctg7180000000580"="ctg7180000000580\n(n=189456", 
+                                    "ctg7180000000708"="ctg7180000000708\n(n=11120)", 
+                                     "ctg7180000000054"="ctg7180000000054\n(n=4658)", 
+                                     "ctg7180000000530"="ctg7180000000530\n(n=4671)", 
+                                     "ctg7180000000587"="ctg7180000000587\n(n=4723)", 
+                                     "ctg7180000000651"="ctg7180000000651\n(n=5476)")) +
+          labs(y="Pseudomatching Length", x="Contigs") 
+  return(plot)
+}
+
+
+
+make_comparison_plot_option4 <- function(input_df, lower, upper) {
+  plot <- ggplot(input_df, aes(x=name, y=length, fill=status)) + 
+          #geom_boxplot(outlier.shape=NA) +
+          geom_violin() +
+          theme_classic() +
+          theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
+                axis.title.x=element_text(size=12, vjust=-0.5),
+                axis.title.y=element_text(size=12),
+                legend.text=element_text(size=10),
+                axis.text.x = element_text(angle = 0, vjust=0.5, size=9),
+                axis.text.y =element_text(size=8, color="black"),
+                legend.box="horizontal",
+                legend.title=element_text(size=10),
+                legend.position=c(0.8, 0.9)) +
+          scale_y_continuous(limits=c(lower, upper * 1.1)) +
+          scale_fill_discrete(name="", labels=c("Normal", "Suspicious")) +
+          scale_x_discrete(labels=c("All other contigs"="All other contigs\n(n=62482)", 
+                                    "ctg7180000000054"="ctg7180000000054\n(n=4658)", 
+                                    "ctg7180000000530"="ctg7180000000530\n(n=4671)", 
+                                    "ctg7180000000587"="ctg7180000000587\n(n=4723)", 
+                                    "ctg7180000000651"="ctg7180000000651\n(n=5476)")) +
+          labs(y="Pseudomatching Length", x="Contigs") 
+  return(plot)
+}
+
 
 
 process_paf_df <- function(input_df) {
@@ -133,7 +194,7 @@ process_paf_df <- function(input_df) {
 }
 
 ########################################################################
-# Main method for the code
+# Main method for the code - Option #1
 ########################################################################
 
 # Load in sub-sampled data for regular contigs
@@ -177,15 +238,121 @@ for (contig_name in unique(total_df$name)) {
 plot_1 <- make_comparison_plot(total_df, min_value, max_value)
 plot_1
 
+plot_1_alt <- make_comparison_plot_option4(total_df, min_value, max_value)
+plot_1_alt
+
 plot_2 <- make_single_boxplot(total_df)
 plot_2
 
 # Combine the two plots into one ...
 combined_plot <- ggdraw() +
                  draw_plot(plot_1) +
-                 draw_plot(plot_2, x = 0.7, y = .65, width = .15, height = .3)
+                 draw_plot(plot_2, x = 0.07, y = .65, width = .15, height = .3)
                  #draw_plot(plot_2, x=0.12, y=0.5, width=0.2, height=0.4)
 combined_plot
+
+
+########################################################################
+# Main method for the code - Option #2
+########################################################################
+
+# Load in all values for contigs with most suspicious lengths
+top_contig_files <- list.files(path=data_working_dir, pattern="top_contig_[[:digit:]]+_lengths\\.csv$")
+regular_contig_files <- list.files(path=data_working_dir, pattern="regular_contig_[[:digit:]]+_lengths\\.csv$")
+
+# Load all the 'suspicious' contig files
+df_list <- list()
+for (path in top_contig_files) {
+  curr_path <- paste(data_working_dir, path, sep="")
+  curr_df <- read.csv(curr_path, header=FALSE)
+  
+  colnames(curr_df) <-  c("name", "pos", "length")
+  df_list[[path]] <- curr_df
+}
+all_top_contigs_df <- do.call("rbind", df_list)
+all_top_contigs_df["status"] <- "suspicious"
+
+# Load all the 'normal' contig files
+df_list <- list()
+for (path in regular_contig_files) {
+  curr_path <- paste(data_working_dir, path, sep="")
+  curr_df <- read.csv(curr_path, header=FALSE)
+  
+  colnames(curr_df) <-  c("name", "pos", "length")
+  df_list[[path]] <- curr_df
+}
+all_normal_contigs_df <- do.call("rbind", df_list)
+all_normal_contigs_df["status"] <- "normal"
+
+# Combine the data-frames
+total_df <- do.call("rbind", list(all_normal_contigs_df, all_top_contigs_df))
+
+# Find the upper/lower point for
+min_value <- .Machine$integer.max
+max_value <- 0
+for (contig_name in unique(total_df$name)) {
+  temp_df <- subset(total_df, name == contig_name)
+  box_plot_stats <- boxplot(temp_df$length, plot=FALSE)$stats
+  
+  max_value <- max(box_plot_stats[5], max_value)
+  min_value <- min(box_plot_stats[1], min_value)
+}
+
+# Make boxplot with the 4 suspicous contigs and 4 normal contigs
+total_df$name <- factor(total_df$name, levels=c("ctg7180000000220",
+                                                "ctg7180000000551", 
+                                                "ctg7180000000580", 
+                                                "ctg7180000000708", 
+                                                "ctg7180000000054", 
+                                                "ctg7180000000530", 
+                                                "ctg7180000000587", 
+                                                "ctg7180000000651"))
+plot1 <- make_comparison_plot_option2(total_df, min_value, max_value)
+plot1
+
+
+
+########################################################################
+# Main method for the code - Option #3
+########################################################################
+
+# Load the csv file with percentile numbers
+percent_df <- read.csv(paste(data_working_dir, "assembly_percentile_report.csv", sep=""), header=TRUE)
+colnames(percent_df) <- c("name", "contiglength", "quartileone", "median", "quartilethree", "ninetypercent", "mean")
+percent_df["contignum"] <- seq.int(nrow(percent_df))
+
+percent_df["status"] <- "normal"
+percent_df[331,]["status"] <- "suspicious"
+percent_df[332,]["status"] <- "suspicious"
+percent_df[333,]["status"] <- "suspicious"
+percent_df[334,]["status"] <- "suspicious"
+
+# Make the plot
+plot1_option3 <-  ggplot(percent_df, aes(contiglength, quartileone)) +
+                  annotate("rect", xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=2, fill = "green", alpha = 0.15) +
+                  annotate("rect", xmin=-Inf, xmax=Inf, ymin=2, ymax=Inf, fill = "red", alpha = 0.15) +
+                  annotate("text", x=2.5e7, y=1, label="bold('Normal Contigs')", color="darkgreen", parse = TRUE) +
+                  annotate("text", x=2.5e7, y=7, label="bold('Suspicious Contigs')", color="red", parse = TRUE) +
+                  annotate("text", x=4.15e7, y=2.90, label="PML threshold for contamination", color="black") +
+                  annotate("text", x=3.8e6, y=5, label="ctg7180000000530", color="black", size=2.5) +
+                  annotate("text", x=3.8e6, y=10, label="ctg7180000000587", color="black", size=2.5) +
+                  annotate("text", x=3.8e6, y=11, label="ctg7180000000651", color="black", size=2.5) +
+                  annotate("text", x=3.5e6, y=12, label="ctg7180000000054", color="black", size=2.5) +
+                  geom_point(aes(fill=status), shape = 21, colour = "black", size = 1.5, stroke = 0.5, alpha=0.5) +
+                  theme_classic() +
+                  theme(legend.position="none",
+                        plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"),
+                        aspect.ratio = 1/4,
+                        axis.title.x=element_text(size=10),
+                        axis.title.y=element_text(size=10)) +
+                  geom_hline(yintercept=2, linetype="dashed", color = "black", size=1) +
+                  scale_y_continuous(limits=c(0, 12), breaks=seq(0,12,2)) +
+                  labs(x="Contig Length (After Digestion)",
+                       y="25th percentile of\n PML distribution") +
+                  scale_color_discrete(name="Status", labels=c("normal"="Normal", "suspicious"="Suspicious"))
+plot1_option3
+
+
 
 
 ####################################################
@@ -213,11 +380,11 @@ combined_plot
 # plot_4
 
 ####################################################
-# EDIT: Start of new sub-plot ...
+# Start of new sub-plot with dot-plots ...
 ####################################################
 
 # load in paf file
-input_paf_file <- "/Users/omarahmed/Downloads/test.paf"
+input_paf_file <- "/Users/omarahmed/Downloads/current_research/spumoni_exps/exp_8/trial_3/test.paf"
 paf_df <- read_paf(input_paf_file)
 
 # remove un-needed alignments
@@ -246,23 +413,29 @@ facet_labeller <- function(variable, value){
   return(contig_names[value])
 }
 contig_names['ctg7180000000054']
+
 # make the dot plot
 dot_plot <- ggplot(data=out_df_subset, aes(x=as.integer(x), y=as.integer(y), color=tname)) + 
             geom_point(size=0.1) + 
             labs(x="Contig coordinates", y="Database coordinates") +
             theme_bw() +          
             theme(plot.title=element_text(hjust = 0.5, size=10, face="bold"),
-                  axis.title.x=element_text(size =12),
-                  axis.title.y=element_text(size=12),
-                  axis.text.x = element_text(angle=0, size=6),
-                  axis.text.y =element_text(size=6, color="black"),
+                  axis.title.x=element_text(size =10),
+                  axis.title.y=element_text(size=10),
+                  axis.text.x = element_text(angle=0, size=8),
+                  axis.text.y =element_text(size=8, color="black"),
+                  strip.text.x=element_text(size=10),
+                  plot.margin = unit(c(0.25, 0.5, 0, 0.5), "cm"),
+                  #aspect.ratio = 0.50,
                   legend.box="horizontal",
                   legend.position="bottom",
                   legend.margin=margin(t=0, r=0, b=0, l=0, unit="cm"),
-                  legend.text=element_text(size=8),
-                  legend.title=element_text(size=8)) +
+                  legend.text=element_text(size=10),
+                  legend.title=element_text(size=10)) +
+            guides(colour = guide_legend(override.aes = list(size=2))) +
             facet_wrap(vars(qname), scales="free", labeller=facet_labeller) +
             scale_color_discrete(name="Accessions", labels=c("NZ_CP067426.1", "NZ_CP086334.1", "NZ_CP091038.1"))
+
 dot_plot
 
 ####################################################
@@ -274,12 +447,12 @@ dot_plot
 #                         ggarrange(plot_3, plot_4, ncol=2, labels=c("b", "c")), 
 #                         nrow=2, labels=c("a"))
 
-total_plot <- ggarrange(plot_1, dot_plot, nrow=1, ncol=2, labels=c("a", "b"))
+total_plot <- ggarrange(plot1_option3, dot_plot, nrow=2, ncol=1, labels=c("a", "b"), heights=c(1, 2))
 total_plot
 
 # Saving the plot: a vector and non-vector graphic
 output_name <- paste(output_dir, "exp8_plot_assembly_1.jpeg", sep="")
-ggsave(output_name, plot=total_plot, dpi=800, device="jpeg", width=10, height=5)
+ggsave(output_name, plot=total_plot, dpi=800, device="jpeg", width=7.19, height=6.71)
 
 output_name <- paste(output_dir, "exp8_plot_assembly_1.pdf", sep="")
-ggsave(output_name, plot=total_plot, dpi=800, device="pdf", width=10, height=5)
+ggsave(output_name, plot=total_plot, dpi=800, device="pdf", width=7.19, height=6.71)
