@@ -37,6 +37,8 @@ make_group_bar_plot <- function(input_df, read_type) {
                         value.name = "percent")
   setDF(group_df_melt)
   
+  cbbPalette <- c( "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000", "#E69F00", "#56B4E9", "#009E73")
+  
   # Create the grouped bar-chart
   #read_type <- "Illumina"
   graph_title <- paste("Multi-Class Classification of", read_type, "Reads Using the Document Array")
@@ -57,7 +59,8 @@ make_group_bar_plot <- function(input_df, read_type) {
           labs(x="Simulated Read Set",
                y="Average Ratio of Document Labels Across Read",
                title="") +
-          scale_fill_discrete(name="Species", labels=dataset_names)
+          #scale_fill_discrete(name="Species", labels=dataset_names) +
+          scale_fill_manual(name="Species", labels=dataset_names, values=cbbPalette)
     return (plot)
 }
 
@@ -81,3 +84,4 @@ for (input_file in data_paths) {
   ggsave(output_name, plot=curr_plot, dpi=800, device="jpeg", width=10, height=6)
   pos <- pos + 1
 }
+

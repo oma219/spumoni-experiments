@@ -327,12 +327,15 @@ percent_df[332,]["status"] <- "suspicious"
 percent_df[333,]["status"] <- "suspicious"
 percent_df[334,]["status"] <- "suspicious"
 
+
+cbbPalette <- c( "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000", "#E69F00", "#56B4E9", "#009E73")
+
 # Make the plot
 plot1_option3 <-  ggplot(percent_df, aes(contiglength, quartileone)) +
                   annotate("rect", xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=2, fill = "green", alpha = 0.15) +
-                  annotate("rect", xmin=-Inf, xmax=Inf, ymin=2, ymax=Inf, fill = "red", alpha = 0.15) +
+                  annotate("rect", xmin=-Inf, xmax=Inf, ymin=2, ymax=Inf, fill = "#56B4E9", alpha = 0.15) +
                   annotate("text", x=2.5e7, y=1, label="bold('Normal Contigs')", color="darkgreen", parse = TRUE) +
-                  annotate("text", x=2.5e7, y=7, label="bold('Suspicious Contigs')", color="red", parse = TRUE) +
+                  annotate("text", x=2.5e7, y=7, label="bold('Suspicious Contigs')", color="#56B4E9", parse = TRUE) +
                   annotate("text", x=4.15e7, y=2.90, label="PML threshold for contamination", color="black") +
                   annotate("text", x=3.8e6, y=5, label="ctg7180000000530", color="black", size=2.5) +
                   annotate("text", x=3.8e6, y=10, label="ctg7180000000587", color="black", size=2.5) +
@@ -349,7 +352,10 @@ plot1_option3 <-  ggplot(percent_df, aes(contiglength, quartileone)) +
                   scale_y_continuous(limits=c(0, 12), breaks=seq(0,12,2)) +
                   labs(x="Contig Length (After Digestion)",
                        y="25th percentile of\n PML distribution") +
-                  scale_color_discrete(name="Status", labels=c("normal"="Normal", "suspicious"="Suspicious"))
+                  scale_color_discrete(name="Status", labels=c("normal"="Normal", "suspicious"="Suspicious")) +
+                  scale_fill_manual(values=c("darkgreen", "#56B4E9"))
+                  #scale_fill_manual(values=cbbPalette)
+                  #scale_fill_manual(values=("darkgreen", #56B4E9"))
 plot1_option3
 
 
@@ -434,8 +440,8 @@ dot_plot <- ggplot(data=out_df_subset, aes(x=as.integer(x), y=as.integer(y), col
                   legend.title=element_text(size=10)) +
             guides(colour = guide_legend(override.aes = list(size=2))) +
             facet_wrap(vars(qname), scales="free", labeller=facet_labeller) +
-            scale_color_discrete(name="Accessions", labels=c("NZ_CP067426.1", "NZ_CP086334.1", "NZ_CP091038.1"))
-
+            #scale_color_discrete(name="Accessions", labels=c("NZ_CP067426.1", "NZ_CP086334.1", "NZ_CP091038.1"), values=cbbPalette)
+            scale_color_manual(name="Accessions", labels=c("NZ_CP067426.1", "NZ_CP086334.1", "NZ_CP091038.1"), values=cbbPalette)
 dot_plot
 
 ####################################################
