@@ -47,7 +47,7 @@ make_group_bar_plot <- function(input_df, read_type) {
           theme_bw() +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
-                axis.text.x=element_text(face="italic", size=9),
+                axis.text.x=element_text(face="italic", size=12, angle = 20,hjust=1),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
                 legend.text=element_text(size=12, face="italic"),
@@ -75,6 +75,7 @@ read_types <- c("Illumina", "ONT")
 for (input_file in data_paths) {
   input_df <- read.csv(input_file, header=TRUE)
   curr_plot <- make_group_bar_plot(input_df, read_types[pos])
+  print(curr_plot)
   
   # Save a vector graphic & regular graphic
   output_name <- paste(output_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.pdf", sep="")

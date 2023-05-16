@@ -337,10 +337,10 @@ plot1_option3 <-  ggplot(percent_df, aes(contiglength, quartileone)) +
                   annotate("text", x=2.5e7, y=1, label="bold('Normal Contigs')", color="darkgreen", parse = TRUE) +
                   annotate("text", x=2.5e7, y=7, label="bold('Suspicious Contigs')", color="#56B4E9", parse = TRUE) +
                   annotate("text", x=4.15e7, y=2.90, label="PML threshold for contamination", color="black") +
-                  annotate("text", x=3.8e6, y=5, label="ctg7180000000530", color="black", size=2.5) +
-                  annotate("text", x=3.8e6, y=10, label="ctg7180000000587", color="black", size=2.5) +
-                  annotate("text", x=3.8e6, y=11, label="ctg7180000000651", color="black", size=2.5) +
-                  annotate("text", x=3.5e6, y=12, label="ctg7180000000054", color="black", size=2.5) +
+                  annotate("text", x=4.8e6, y=5, label="ctg7180000000530", color="black", size=3.0) +
+                  annotate("text", x=4.8e6, y=10, label="ctg7180000000587", color="black", size=3.0) +
+                  annotate("text", x=4.8e6, y=11, label="ctg7180000000651", color="black", size=3.0) +
+                  annotate("text", x=4.5e6, y=12, label="ctg7180000000054", color="black", size=3.0) +
                   geom_point(aes(fill=status), shape = 21, colour = "black", size = 1.5, stroke = 0.5, alpha=0.5) +
                   theme_classic() +
                   theme(legend.position="none",
