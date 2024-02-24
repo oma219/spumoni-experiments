@@ -79,31 +79,53 @@ rule build_index_promotion_minimizer_exp3:
     input:
         "exp3_file_list/dataset_file_list.txt"
     output:
-        "exp3_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.spumoni",
-        "exp3_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.ms",
-        "exp3_promotion_index_k{k}_w{w}/spumoni_full_ref.bin"
-    run:
-        shell("spumoni build -i {input[0]} -b exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/ -M -P -m -K {wildcards.k} -W {wildcards.w} &> exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/build.log")
+        "exp3_promotion_index_k{k}_w{w}/output.bin.thrbv.spumoni",
+        "exp3_promotion_index_k{k}_w{w}/output.bin.thrbv.ms",
+        "exp3_promotion_index_k{k}_w{w}/output.bin"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/output \
+                      -M \
+                      -P \
+                      -m \
+                      -K {wildcards.k} \
+                      -W {wildcards.w} &> exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/build.log
+        """
 
 rule build_index_dna_minimizer_exp3:
     input:
         "exp3_file_list/dataset_file_list.txt"
     output:
-        "exp3_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp3_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.ms",
-        "exp3_dna_index_k{k}_w{w}/spumoni_full_ref.fa"
-    run:
-        shell("spumoni build -i {input[0]} -b exp3_dna_index_k{wildcards.k}_w{wildcards.w}/ -M -P -t -K {wildcards.k} -W {wildcards.w} &> exp3_dna_index_k{wildcards.k}_w{wildcards.w}/build.log")
+        "exp3_dna_index_k{k}_w{w}/output.fa.thrbv.spumoni",
+        "exp3_dna_index_k{k}_w{w}/output.fa.thrbv.ms",
+        "exp3_dna_index_k{k}_w{w}/output.fa"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o exp3_dna_index_k{wildcards.k}_w{wildcards.w}/output \
+                      -M \
+                      -P \
+                      -t \
+                      -K {wildcards.k} \
+                      -W {wildcards.w} &> exp3_dna_index_k{wildcards.k}_w{wildcards.w}/build.log
+        """
 
 rule build_full_index_exp3:
     input:
         "exp3_file_list/dataset_file_list.txt"
     output:
-        "exp3_full_index/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp3_full_index/spumoni_full_ref.fa.thrbv.ms",
-        "exp3_full_index/spumoni_full_ref.fa"
-    run:
-        shell("spumoni build -i {input[0]} -b exp3_full_index/ -M -P -n  &> exp3_full_index/build.log")
+        "exp3_full_index/output.fa.thrbv.spumoni",
+        "exp3_full_index/output.fa.thrbv.ms",
+        "exp3_full_index/output.fa"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o exp3_full_index/output \
+                      -M \
+                      -P \
+                      -n  &> exp3_full_index/build.log
+        """
 
 # Section 2.3: Choose random positive genome, and simulate short or long reads.
 
@@ -116,7 +138,14 @@ rule simulate_short_positive_reads_exp3:
         """
         set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        mason_simulator -ir $positive_genome -n {num_reads_exp3} -v -o {output[0]}.before_filter.fa --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
+
+        mason_simulator -ir $positive_genome \
+                        -n {num_reads_exp3} \
+                        -v \
+                        -o {output[0]}.before_filter.fa \
+                        --illumina-read-length 150 \
+                        --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
+
         python3 {repo_dir}/src/remove_bad_reads.py -i {output[0]}.before_filter.fa > {output[0]}
         rm {output[0]}.before_filter.fa
         """
@@ -130,7 +159,11 @@ rule simulate_long_positive_reads_exp3:
         """
         set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        pbsim --depth 50.0 --prefix exp3_reads/long/positive/positive_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $positive_genome
+        
+        pbsim --depth 50.0 \
+              --prefix exp3_reads/long/positive/positive_reads \
+              --hmm_model {pbsim_model} \
+              --accuracy-mean {long_read_acc_exp3} $positive_genome
 
         cat exp3_reads/long/positive/positive_reads_*.fastq > exp3_reads/long/positive/positive_reads.fastq
         rm exp3_reads/long/positive/positive_reads_*.fastq
@@ -162,7 +195,14 @@ rule simulate_short_null_reads_exp3:
     shell:
         """
         null_genome={input}
-        mason_simulator -ir $null_genome -n {num_reads_exp3} -v -o {output[0]}.before_filter.fa --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
+        
+        mason_simulator -ir $null_genome \
+                        -n {num_reads_exp3} \
+                        -v \
+                        -o {output[0]}.before_filter.fa \
+                        --illumina-read-length 150 \
+                        --illumina-prob-mismatch {illumina_mismatch_prob_exp3}
+        
         python3 {repo_dir}/src/remove_bad_reads.py -i {output[0]}.before_filter.fa > {output[0]}
         rm {output[0]}.before_filter.fa
         """
@@ -175,7 +215,11 @@ rule simulate_long_null_reads_exp3:
     shell:
         """
         null_genome={input}
-        pbsim --depth 0.20 --prefix exp3_reads/long/null/null_reads --hmm_model {pbsim_model} --accuracy-mean {long_read_acc_exp3} $null_genome
+
+        pbsim --depth 0.20 \
+              --prefix exp3_reads/long/null/null_reads \
+              --hmm_model {pbsim_model} \
+              --accuracy-mean {long_read_acc_exp3} $null_genome
 
         cat exp3_reads/long/null/null_reads_*.fastq > exp3_reads/long/null/null_reads.fastq
         rm exp3_reads/long/null/null_reads_*.fastq
@@ -205,9 +249,9 @@ rule classify_using_promotion_index_exp3:
         "exp3_reads/short/null/null_reads.fa",
         "exp3_reads/long/positive/positive_reads.fa",
         "exp3_reads/long/null/null_reads.fa",
-        "exp3_promotion_index_k{k}_w{w}/spumoni_full_ref.bin",
-        "exp3_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.spumoni",
-        "exp3_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.ms"
+        "exp3_promotion_index_k{k}_w{w}/output.bin",
+        "exp3_promotion_index_k{k}_w{w}/output.bin.thrbv.spumoni",
+        "exp3_promotion_index_k{k}_w{w}/output.bin.thrbv.ms"
     output:
         "exp3_results/k{k}_w{w}/index_promotion/short_positive_reads.fa.report",
         "exp3_results/k{k}_w{w}/index_promotion/short_null_reads.fa.report",
@@ -226,14 +270,14 @@ rule classify_using_promotion_index_exp3:
         cp {input[2]} $long_positive_reads
         cp {input[3]} $long_null_reads
 
-        spumoni run -r {input[4]} -p $short_positive_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
-        spumoni run -r {input[4]} -p $short_null_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
-        spumoni run -r {input[4]} -p $long_positive_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
-        spumoni run -r {input[4]} -p $long_null_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/output -p $short_positive_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/output -p $short_null_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/output -p $long_positive_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/output -p $long_null_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
 
         ls -l {input[5]} | awk '{{print $5}}' > {output[4]}
 
-        rm -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/
+        #rm -r exp3_promotion_index_k{wildcards.k}_w{wildcards.w}/
         """
 
 # Section 2.5: Let SPUMONI classify both short and long reads using DNA-minimizer index
@@ -244,9 +288,9 @@ rule classify_using_dna_index_exp3:
         "exp3_reads/short/null/null_reads.fa",
         "exp3_reads/long/positive/positive_reads.fa",
         "exp3_reads/long/null/null_reads.fa",
-        "exp3_dna_index_k{k}_w{w}/spumoni_full_ref.fa",
-        "exp3_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp3_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.ms"
+        "exp3_dna_index_k{k}_w{w}/output.fa",
+        "exp3_dna_index_k{k}_w{w}/output.fa.thrbv.spumoni",
+        "exp3_dna_index_k{k}_w{w}/output.fa.thrbv.ms"
     output:
         "exp3_results/k{k}_w{w}/index_dna/short_positive_reads.fa.report",
         "exp3_results/k{k}_w{w}/index_dna/short_null_reads.fa.report",
@@ -265,14 +309,14 @@ rule classify_using_dna_index_exp3:
         cp {input[2]} $long_positive_reads
         cp {input[3]} $long_null_reads
 
-        spumoni run -r {input[4]} -p $short_positive_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
-        spumoni run -r {input[4]} -p $short_null_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
-        spumoni run -r {input[4]} -p $long_positive_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
-        spumoni run -r {input[4]} -p $long_null_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/output -p $short_positive_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/output -p $short_null_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/output -p $long_positive_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
+        spumoni run -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/output -p $long_null_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
 
         ls -l {input[5]} | awk '{{print $5}}' > {output[4]}
 
-        rm -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/
+        #rm -r exp3_dna_index_k{wildcards.k}_w{wildcards.w}/
         """
 
 # Section 2.6: Let SPUMONI classify both short and long reads using full index
@@ -283,9 +327,9 @@ rule classify_using_full_index_exp3:
         "exp3_reads/short/null/null_reads.fa",
         "exp3_reads/long/positive/positive_reads.fa",
         "exp3_reads/long/null/null_reads.fa",
-        "exp3_full_index/spumoni_full_ref.fa",
-        "exp3_full_index/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp3_full_index/spumoni_full_ref.fa.thrbv.ms"
+        "exp3_full_index/output.fa",
+        "exp3_full_index/output.fa.thrbv.spumoni",
+        "exp3_full_index/output.fa.thrbv.ms"
     output:
         "exp3_results/full_index/short_positive_reads.fa.report",
         "exp3_results/full_index/short_null_reads.fa.report",
@@ -304,10 +348,10 @@ rule classify_using_full_index_exp3:
         cp {input[2]} $long_positive_reads
         cp {input[3]} $long_null_reads
 
-        spumoni run -r {input[4]} -p $short_positive_reads -P -c -n 
-        spumoni run -r {input[4]} -p $short_null_reads -P -c -n 
-        spumoni run -r {input[4]} -p $long_positive_reads -P -c -n 
-        spumoni run -r {input[4]} -p $long_null_reads -P -c -n 
+        spumoni run -r exp3_full_index/output -p $short_positive_reads -P -c -n 
+        spumoni run -r exp3_full_index/output -p $short_null_reads -P -c -n 
+        spumoni run -r exp3_full_index/output -p $long_positive_reads -P -c -n 
+        spumoni run -r exp3_full_index/output -p $long_null_reads -P -c -n 
 
         ls -l {input[5]} | awk '{{print $5}}' > {output[4]}
         """

@@ -59,31 +59,51 @@ rule build_index_promotion_minimizer_exp6:
     input:
         "exp6_file_list/dataset_file_list.txt"
     output:
-        "exp6_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.spumoni",
-        "exp6_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.ms",
-        "exp6_promotion_index_k{k}_w{w}/spumoni_full_ref.bin"
-    run:
-        shell("spumoni build -i {input[0]} -b exp6_promotion_index_k{wildcards.k}_w{wildcards.w}/ -M -P -m -K {wildcards.k} -W {wildcards.w} &> exp6_promotion_index_k{wildcards.k}_w{wildcards.w}/build.log")
+        "exp6_promotion_index_k{k}_w{w}/output.bin.thrbv.spumoni",
+        "exp6_promotion_index_k{k}_w{w}/output.bin.thrbv.ms",
+        "exp6_promotion_index_k{k}_w{w}/output.bin"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o exp6_promotion_index_k{wildcards.k}_w{wildcards.w}/output \
+                      -M \
+                      -P \
+                      -m \
+                      -K {wildcards.k} -W {wildcards.w} &> exp6_promotion_index_k{wildcards.k}_w{wildcards.w}/build.log
+        """
 
 rule build_index_dna_minimizer_exp6:
     input:
         "exp6_file_list/dataset_file_list.txt"
     output:
-        "exp6_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp6_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.ms",
-        "exp6_dna_index_k{k}_w{w}/spumoni_full_ref.fa"
-    run:
-        shell("spumoni build -i {input[0]} -b exp6_dna_index_k{wildcards.k}_w{wildcards.w}/ -M -P -t -K {wildcards.k} -W {wildcards.w} &> exp6_dna_index_k{wildcards.k}_w{wildcards.w}/build.log")
+        "exp6_dna_index_k{k}_w{w}/output.fa.thrbv.spumoni",
+        "exp6_dna_index_k{k}_w{w}/output.fa.thrbv.ms",
+        "exp6_dna_index_k{k}_w{w}/output.fa"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o exp6_dna_index_k{wildcards.k}_w{wildcards.w}/output \
+                      -M \
+                      -P \
+                      -t \
+                      -K {wildcards.k} -W {wildcards.w} &> exp6_dna_index_k{wildcards.k}_w{wildcards.w}/build.log
+        """
 
 rule build_full_index_exp6:
     input:
         "exp6_file_list/dataset_file_list.txt"
     output:
-        "exp6_full_index/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp6_full_index/spumoni_full_ref.fa.thrbv.ms",
-        "exp6_full_index/spumoni_full_ref.fa"
-    run:
-        shell("spumoni build -i {input[0]} -b exp6_full_index/ -M -P -n  &> exp6_full_index/build.log")
+        "exp6_full_index/output.fa.thrbv.spumoni",
+        "exp6_full_index/output.fa.thrbv.ms",
+        "exp6_full_index/output.fa"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o exp6_full_index/output \
+                      -M \
+                      -P \
+                      -n  &> exp6_full_index/build.log
+        """
 
 # Section 2.3: Choose random positive genome, simulate short reads
 
@@ -96,7 +116,12 @@ rule simulate_short_positive_reads_exp6:
         """
         set +o pipefail;
         positive_genome=$(ls data/dataset_1/*.fna | shuf | head -n1)
-        mason_simulator -ir $positive_genome -n {num_reads_exp6} -v -o {output[0]} --illumina-read-length 150 --illumina-prob-mismatch {illumina_mismatch_prob_exp6}
+        mason_simulator -ir $positive_genome \
+                        -n {num_reads_exp6} \
+                        -v \
+                        -o {output[0]} \
+                        --illumina-read-length 150 \
+                        --illumina-prob-mismatch {illumina_mismatch_prob_exp6}
         """
 
 # Section 2.4: Let SPUMONI classify the short reads using promoted index, dna index, and full index
@@ -104,9 +129,9 @@ rule simulate_short_positive_reads_exp6:
 rule classify_using_promotion_index_exp6:
     input:
         "exp6_reads/short/positive/positive_reads.fa",
-        "exp6_promotion_index_k{k}_w{w}/spumoni_full_ref.bin",
-        "exp6_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.spumoni",
-        "exp6_promotion_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.ms"
+        "exp6_promotion_index_k{k}_w{w}/output.bin",
+        "exp6_promotion_index_k{k}_w{w}/output.bin.thrbv.spumoni",
+        "exp6_promotion_index_k{k}_w{w}/output.bin.thrbv.ms"
     output:
         "exp6_results/k{k}_w{w}/index_promotion/short_positive_reads.fa.report",
         "exp6_results/k{k}_w{w}/index_promotion/index_stats.txt",
@@ -116,16 +141,21 @@ rule classify_using_promotion_index_exp6:
         short_positive_reads="exp6_results/k{wildcards.k}_w{wildcards.w}/index_promotion/short_positive_reads.fa"
         cp {input[0]} $short_positive_reads
 
-        {time_prog} {time_format} --output={output[2]} spumoni run -r {input[1]} -p $short_positive_reads -P -c -m -K {wildcards.k} -W {wildcards.w}
+        {time_prog} {time_format} --output={output[2]} spumoni run \
+                                                               -r exp6_promotion_index_k{wildcards.k}_w{wildcards.w}/output \
+                                                               -p $short_positive_reads \
+                                                               -P \
+                                                               -c \
+                                                               -m -K {wildcards.k} -W {wildcards.w}
         ls -l {input[2]} | awk '{{print $5}}' > {output[1]}
         """
 
 rule classify_using_dna_index_exp6:
     input:
         "exp6_reads/short/positive/positive_reads.fa",
-        "exp6_dna_index_k{k}_w{w}/spumoni_full_ref.fa",
-        "exp6_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp6_dna_index_k{k}_w{w}/spumoni_full_ref.fa.thrbv.ms"
+        "exp6_dna_index_k{k}_w{w}/output.fa",
+        "exp6_dna_index_k{k}_w{w}/output.fa.thrbv.spumoni",
+        "exp6_dna_index_k{k}_w{w}/output.fa.thrbv.ms"
     output:
         "exp6_results/k{k}_w{w}/index_dna/short_positive_reads.fa.report",
         "exp6_results/k{k}_w{w}/index_dna/index_stats.txt",
@@ -135,16 +165,22 @@ rule classify_using_dna_index_exp6:
         short_positive_reads="exp6_results/k{wildcards.k}_w{wildcards.w}/index_dna/short_positive_reads.fa"
         cp {input[0]} $short_positive_reads
 
-        {time_prog} {time_format} --output={output[2]} spumoni run -r {input[1]} -p $short_positive_reads -P -c -a -K {wildcards.k} -W {wildcards.w}
+        {time_prog} {time_format} --output={output[2]} spumoni run \
+                                                               -r exp6_dna_index_k{wildcards.k}_w{wildcards.w}/output \
+                                                               -p $short_positive_reads \
+                                                               -P \
+                                                               -c \
+                                                               -a \
+                                                               -K {wildcards.k} -W {wildcards.w}
         ls -l {input[2]} | awk '{{print $5}}' > {output[1]}
         """
 
 rule classify_using_full_index_exp6:
     input:
         "exp6_reads/short/positive/positive_reads.fa",
-        "exp6_full_index/spumoni_full_ref.fa",
-        "exp6_full_index/spumoni_full_ref.fa.thrbv.spumoni",
-        "exp6_full_index/spumoni_full_ref.fa.thrbv.ms"
+        "exp6_full_index/output.fa",
+        "exp6_full_index/output.fa.thrbv.spumoni",
+        "exp6_full_index/output.fa.thrbv.ms"
     output:
         "exp6_results/full_index/short_positive_reads.fa.report",
         "exp6_results/full_index/index_stats.txt",
@@ -154,7 +190,12 @@ rule classify_using_full_index_exp6:
         short_positive_reads="exp6_results/full_index/short_positive_reads.fa"
         cp {input[0]} $short_positive_reads
 
-        {time_prog} {time_format} --output={output[2]} spumoni run -r {input[1]} -p $short_positive_reads -P -c -n 
+        {time_prog} {time_format} --output={output[2]} spumoni run \
+                                                               -r exp6_full_index/output \
+                                                               -p $short_positive_reads \
+                                                               -P \
+                                                               -c \
+                                                               -n 
         ls -l {input[2]} | awk '{{print $5}}' > {output[1]}
         """
 

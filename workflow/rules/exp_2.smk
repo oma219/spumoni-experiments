@@ -45,32 +45,43 @@ rule build_index_promotion_minimizer_exp2:
     input:
         "file_list/dataset_file_list.txt"
     output:
-        "current_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.spumoni",
-        "current_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.ms"
-    run:
-        shell("spumoni build -i {input[0]} -b current_index_k{wildcards.k}_w{wildcards.w}/ -M -P -m -K {wildcards.k} -W {wildcards.w} &> current_index_k{wildcards.k}_w{wildcards.w}/build.log")
+        "current_index_k{k}_w{w}/output.bin.thrbv.spumoni",
+        "current_index_k{k}_w{w}/output.bin.thrbv.ms"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o current_index_k{wildcards.k}_w{wildcards.w}/output \
+                      -M \
+                      -P \
+                      -m \
+                      -K {wildcards.k} -W {wildcards.w} -k &> current_index_k{wildcards.k}_w{wildcards.w}/build.log
+        """
 
 rule gather_index_stats_promotion_minimizer_exp2:
     input:
-        "current_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.spumoni",
-        "current_index_k{k}_w{w}/spumoni_full_ref.bin.thrbv.ms"
+        "current_index_k{k}_w{w}/output.bin.thrbv.spumoni",
+        "current_index_k{k}_w{w}/output.bin.thrbv.ms"
     output:
         "results/promotion/index_results_k{k}_w{w}.txt"
     shell:
         """
         input_file="current_index_k{wildcards.k}_w{wildcards.w}/build.log"
-        ms_index_file="current_index_k{wildcards.k}_w{wildcards.w}/spumoni_full_ref.bin.thrbv.ms"
-        slp_file="current_index_k{wildcards.k}_w{wildcards.w}/spumoni_full_ref.bin.slp"
-        pml_index_file="current_index_k{wildcards.k}_w{wildcards.w}/spumoni_full_ref.bin.thrbv.spumoni"
+        ms_index_file="current_index_k{wildcards.k}_w{wildcards.w}/output.bin.thrbv.ms"
+        slp_file="current_index_k{wildcards.k}_w{wildcards.w}/output.bin.slp"
+        pml_index_file="current_index_k{wildcards.k}_w{wildcards.w}/output.bin.thrbv.spumoni"
+
         type="promotion"
         k={wildcards.k}
         w={wildcards.w}
+
         r=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $6}}' | sed 's/,//')
         n=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $9}}' | sed 's/,//')
         n_over_r=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $12}}')
+
         ms_size=$(ls -l $ms_index_file | awk '{{print $5}}')
         slp_size=$(ls -l $slp_file | awk '{{print $5}}')
         pml_size=$(ls -l $pml_index_file | awk '{{print $5}}')
+
         printf '%s,%s,%d,%d,%s,%s,%s,%s,%s,%s\n' {dataset_name_exp2} $type $k $w $n $r $n_over_r $ms_size $slp_size $pml_size > {output[0]}
         rm -r current_index_k{wildcards.k}_w{wildcards.w}/
         """
@@ -81,32 +92,43 @@ rule build_index_dna_minimizer_exp2:
     input:
         "file_list/dataset_file_list.txt"
     output:
-        "current_index_k{k}_w{w}_dna/spumoni_full_ref.fa.thrbv.spumoni",
-        "current_index_k{k}_w{w}_dna/spumoni_full_ref.fa.thrbv.ms"
-    run:
-        shell("spumoni build -i {input[0]} -b current_index_k{wildcards.k}_w{wildcards.w}_dna/ -M -P -t -K {wildcards.k} -W {wildcards.w} &> current_index_k{wildcards.k}_w{wildcards.w}_dna/build.log")
+        "current_index_k{k}_w{w}_dna/output.fa.thrbv.spumoni",
+        "current_index_k{k}_w{w}_dna/output.fa.thrbv.ms"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o current_index_k{wildcards.k}_w{wildcards.w}_dna/output \
+                      -M \
+                      -P \
+                      -t \
+                      -K {wildcards.k} -W {wildcards.w} &> current_index_k{wildcards.k}_w{wildcards.w}_dna/build.log
+        """
 
 rule gather_index_stats_dna_minimizer_exp2:
     input:
-        "current_index_k{k}_w{w}_dna/spumoni_full_ref.fa.thrbv.spumoni",
-        "current_index_k{k}_w{w}_dna/spumoni_full_ref.fa.thrbv.ms"
+        "current_index_k{k}_w{w}_dna/output.fa.thrbv.spumoni",
+        "current_index_k{k}_w{w}_dna/output.fa.thrbv.ms"
     output:
         "results/dna/index_results_k{k}_w{w}.txt"
     shell:
         """
         input_file="current_index_k{wildcards.k}_w{wildcards.w}_dna/build.log"
-        ms_index_file="current_index_k{wildcards.k}_w{wildcards.w}_dna/spumoni_full_ref.fa.thrbv.ms"
-        slp_file="current_index_k{wildcards.k}_w{wildcards.w}_dna/spumoni_full_ref.fa.slp"
-        pml_index_file="current_index_k{wildcards.k}_w{wildcards.w}_dna/spumoni_full_ref.fa.thrbv.spumoni"
+
+        ms_index_file="current_index_k{wildcards.k}_w{wildcards.w}_dna/output.fa.thrbv.ms"
+        slp_file="current_index_k{wildcards.k}_w{wildcards.w}_dna/output.fa.slp"
+        pml_index_file="current_index_k{wildcards.k}_w{wildcards.w}_dna/output.fa.thrbv.spumoni"
+
         type="dna"
         k={wildcards.k}
         w={wildcards.w}
         r=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $6}}' | sed 's/,//')
         n=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $9}}' | sed 's/,//')
         n_over_r=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $12}}')
+
         ms_size=$(ls -l $ms_index_file | awk '{{print $5}}')
         slp_size=$(ls -l $slp_file | awk '{{print $5}}')
         pml_size=$(ls -l $pml_index_file | awk '{{print $5}}')
+
         printf '%s,%s,%d,%d,%s,%s,%s,%s,%s,%s\n' {dataset_name_exp2} $type $k $w $n $r $n_over_r $ms_size $slp_size $pml_size > {output[0]}
         rm -r current_index_k{wildcards.k}_w{wildcards.w}_dna/
         """
@@ -117,26 +139,35 @@ rule build_total_index_exp2:
     input:
         "file_list/dataset_file_list.txt"
     output:
-        "full_index/spumoni_full_ref.fa.thrbv.spumoni",
-        "full_index/spumoni_full_ref.fa.thrbv.ms"
-    run:
-        shell("spumoni build -i {input[0]} -b full_index/ -M -P -n &> full_index/build.log")
+        "full_index/output.fa.thrbv.spumoni",
+        "full_index/output.fa.thrbv.ms"
+    shell:
+        """
+        spumoni build -i {input[0]} \
+                      -o full_index/output \
+                      -M \
+                      -P \
+                      -n &> full_index/build.log
+        """
 
 rule gather_index_stats_for_full_index_exp2:
     input:
-        "full_index/spumoni_full_ref.fa.thrbv.spumoni",
-        "full_index/spumoni_full_ref.fa.thrbv.ms"
+        "full_index/output.fa.thrbv.spumoni",
+        "full_index/output.fa.thrbv.ms"
     output:
         "total_results/exp2_full_index_stats.csv"
     shell:
         """
         input_file="full_index/build.log"
-        ms_index_file="full_index/spumoni_full_ref.fa.thrbv.ms"
-        slp_file="full_index/spumoni_full_ref.fa.slp"
-        pml_index_file="full_index/spumoni_full_ref.fa.thrbv.spumoni"
+
+        ms_index_file="full_index/output.fa.thrbv.ms"
+        slp_file="full_index/output.fa.slp"
+        pml_index_file="full_index/output.fa.thrbv.spumoni"
+
         r=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $6}}' | sed 's/,//')
         n=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $9}}' | sed 's/,//')
         n_over_r=$(grep 'build_ms' $input_file | grep 'bwt statistics' | awk '{{print $12}}')
+
         ms_size=$(ls -l $ms_index_file | awk '{{print $5}}')
         slp_size=$(ls -l $slp_file | awk '{{print $5}}')
         pml_size=$(ls -l $pml_index_file | awk '{{print $5}}')
@@ -160,3 +191,8 @@ rule gather_all_index_stats_promotion_exp2:
         # Put all data into the csv-file
         for file in input:
             shell("cat {file} >> {output[0]}")
+
+rule run_exp2:
+    input:
+        "total_results/exp2_index_stats.csv",
+        "total_results/exp2_full_index_stats.csv"
