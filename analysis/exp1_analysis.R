@@ -37,6 +37,8 @@ make_group_bar_plot <- function(input_df, read_type) {
                         value.name = "percent")
   setDF(group_df_melt)
   
+  cbbPalette <- c( "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000", "#E69F00", "#56B4E9", "#009E73")
+  
   # Create the grouped bar-chart
   #read_type <- "Illumina"
   graph_title <- paste("Multi-Class Classification of", read_type, "Reads Using the Document Array")
@@ -45,7 +47,7 @@ make_group_bar_plot <- function(input_df, read_type) {
           theme_bw() +
           theme(plot.title=element_text(hjust = 0.5, size=14, face="bold"),
                 axis.title.x=element_text(size =14),
-                axis.text.x=element_text(face="italic", size=9),
+                axis.text.x=element_text(face="italic", size=12, angle = 20,hjust=1),
                 axis.title.y=element_text(size=14),
                 legend.position = "bottom", 
                 legend.text=element_text(size=12, face="italic"),
@@ -57,7 +59,8 @@ make_group_bar_plot <- function(input_df, read_type) {
           labs(x="Simulated Read Set",
                y="Average Ratio of Document Labels Across Read",
                title="") +
-          scale_fill_discrete(name="Species", labels=dataset_names)
+          #scale_fill_discrete(name="Species", labels=dataset_names) +
+          scale_fill_manual(name="Species", labels=dataset_names, values=cbbPalette)
     return (plot)
 }
 
@@ -72,6 +75,7 @@ read_types <- c("Illumina", "ONT")
 for (input_file in data_paths) {
   input_df <- read.csv(input_file, header=TRUE)
   curr_plot <- make_group_bar_plot(input_df, read_types[pos])
+  print(curr_plot)
   
   # Save a vector graphic & regular graphic
   output_name <- paste(output_dir, "exp1_plot_", read_types[pos], "_docarray_analysis.pdf", sep="")
@@ -81,3 +85,4 @@ for (input_file in data_paths) {
   ggsave(output_name, plot=curr_plot, dpi=800, device="jpeg", width=10, height=6)
   pos <- pos + 1
 }
+
